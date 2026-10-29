@@ -1,0 +1,72 @@
+PELADA PRO — COMO COLOCAR NO SEU CELULAR
+==========================================
+
+Este pacote contém o app pronto para ser hospedado gratuitamente e instalado
+no celular como um app de verdade (com ícone na tela inicial).
+
+Arquivos deste pacote:
+- index.html        (o app)
+- manifest.json      (configuração do app instalável)
+- service-worker.js  (permite funcionar offline)
+- icon-192.png / icon-512.png (ícone do app)
+
+
+PASSO 1 — Hospedar gratuitamente no GitHub Pages
+--------------------------------------------------
+1. Crie uma conta gratuita em https://github.com (se ainda não tiver).
+2. Clique em "New repository" (Novo repositório).
+   - Nome sugerido: pelada-pro
+   - Marque como "Public"
+   - Clique em "Create repository".
+3. Na página do repositório, clique em "Add file" > "Upload files".
+4. Arraste os 5 arquivos deste pacote (index.html, manifest.json,
+   service-worker.js, icon-192.png, icon-512.png) e clique em "Commit changes".
+5. Vá em "Settings" (Configurações) > "Pages" (no menu lateral).
+6. Em "Branch", selecione "main" e a pasta "/ (root)", depois "Save".
+7. Aguarde 1–2 minutos. O GitHub vai te dar um link parecido com:
+   https://SEU-USUARIO.github.io/pelada-pro/
+
+Esse link já é o seu app publicado — pode abrir no celular.
+
+
+PASSO 2 — Instalar como app no celular (Android/Chrome)
+--------------------------------------------------------
+1. Abra o link do passo 1 no Google Chrome do celular.
+2. Toque nos três pontinhos (menu) no canto superior direito.
+3. Toque em "Adicionar à tela inicial" ou "Instalar app".
+4. Confirme. Um ícone do Baba TBT vai aparecer na tela do seu celular,
+   abrindo em tela cheia, sem barra de endereço, como um app normal.
+
+(No iPhone/Safari: toque no ícone de compartilhar > "Adicionar à Tela de Início".)
+
+
+PASSO 3 (opcional) — Gerar um arquivo .APK de verdade para instalar
+---------------------------------------------------------------------
+Se você quiser mesmo um arquivo .apk (por exemplo, para instalar sem depender
+do navegador, ou para compartilhar com outras pessoas por fora da loja):
+
+1. Acesse https://www.pwabuilder.com
+2. Cole o link do seu app (do Passo 1) na caixa de busca e clique na seta.
+3. A ferramenta vai analisar o site e mostrar pontuações para Android, iOS e Windows.
+4. Clique em "Package for stores" (ou "Build My PWA").
+5. Escolha "Android" e clique em "Generate Package".
+6. Baixe o arquivo .zip gerado — dentro dele está o .apk (e/ou .aab) pronto.
+7. Envie o .apk para o celular (por e-mail, WhatsApp Web, Google Drive etc.)
+   e toque nele para instalar. O Android pode pedir para permitir
+   "instalar de fontes desconhecidas" — é normal para apps fora da Play Store.
+
+Observação: para publicar de verdade na Google Play/App Store (não só instalar
+manualmente), aí sim entra o caminho do Flutter + Firebase nativo que
+conversamos antes, com conta de desenvolvedor, assinatura do app, políticas de
+privacidade, etc.
+
+
+DÚVIDAS FREQUENTES
+--------------------
+- "Os dados que eu cadastrar ficam salvos?" Sim, ficam salvos no armazenamento
+  do próprio app (mesmo mecanismo de antes), então continuam lá mesmo se você
+  fechar o app.
+- "Preciso pagar alguma coisa?" Não. GitHub Pages e PWABuilder são gratuitos.
+- "Funciona sem internet?" Depois de instalado uma primeira vez, o app abre
+  offline (graças ao service-worker.js), mas os dados só sincronizam com
+  outros celulares quando há conexão.

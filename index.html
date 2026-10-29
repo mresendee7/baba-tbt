@@ -1,0 +1,3278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Baba TBT</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#101317">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Baba TBT">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#101317; --card:#1C2026; --card-2:#20252c; --line:rgba(255,255,255,0.08);
+  --green:#2E7D32; --green-light:#4CAF50; --white:#F5F6F7; --gray:#8A8F98; --gray-dim:#565B63;
+  --gold:#E4B93B; --danger:#E5484D; --blue-card:#3D8FB3;
+  --tier-bronze:#A0522D; --tier-prata:#B0B7BD; --tier-ouro:#E4B93B; --tier-platina:#5FC9BE; --tier-diamante:#6FB3F2; --tier-elite:#8B5CF6;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{background:var(--bg); font-family:'Inter',sans-serif; color:var(--white); min-height:100vh; display:flex; justify-content:center;}
+#shell{width:100%; max-width:460px; min-height:100vh; display:flex; flex-direction:column; position:relative;}
+header{
+  padding:18px 18px 12px; display:flex; align-items:center; gap:10px; justify-content:space-between;
+  position:sticky; top:0; background:linear-gradient(180deg, var(--bg) 75%, transparent); z-index:6; border-bottom:1px solid var(--line);
+}
+.brand{display:flex; align-items:center; gap:10px; min-width:0;}
+.logo{width:34px; height:34px; border-radius:9px; background:linear-gradient(160deg,var(--green-light),var(--green)); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;}
+header h1{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:19px; text-transform:uppercase; letter-spacing:0.6px; margin:0; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+header .sub{font-size:10.5px; color:var(--gray);}
+
+main{flex:1; padding:14px 16px 96px;}
+
+.eyebrow{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--green-light); margin:16px 0 8px; display:flex; align-items:center; justify-content:space-between;}
+.eyebrow small{font-family:'Inter',sans-serif; font-size:11px; color:var(--gray); text-transform:none; letter-spacing:0; font-weight:500;}
+
+.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:10px;}
+.row{display:flex; align-items:center; gap:10px;}
+.between{justify-content:space-between;}
+
+.btn{font-family:'Inter',sans-serif; font-weight:700; font-size:13px; border:none; border-radius:11px; padding:11px 15px; cursor:pointer;}
+.btn:active{transform:scale(0.97);}
+.btn-primary{background:var(--green); color:#fff;}
+.btn-outline{background:transparent; border:1px solid var(--line); color:var(--white);}
+.btn-danger{background:rgba(229,72,77,0.15); color:var(--danger); border:1px solid rgba(229,72,77,0.35);}
+.btn-ghost{background:var(--card-2); color:var(--white);}
+.btn-sm{padding:7px 10px; font-size:12px; border-radius:9px;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:0.35; cursor:not-allowed;}
+
+input[type=text], input[type=number], select{
+  font-family:'Inter',sans-serif; background:var(--card-2); border:1px solid var(--line); color:var(--white);
+  border-radius:10px; padding:10px 11px; font-size:13.5px; width:100%; outline:none;
+}
+input::placeholder{color:var(--gray-dim);}
+input:focus, select:focus{border-color:var(--green-light);}
+select option{color:#000;}
+label.lbl{font-size:11px; color:var(--gray); margin-bottom:4px; display:block; font-weight:600;}
+.field{margin-bottom:10px;}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;}
+
+.overall-badge{width:42px; height:50px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Rajdhani',sans-serif; font-weight:700; flex-shrink:0; border:1.5px solid;
+  background:linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0));}
+.overall-badge .num{font-size:18px; line-height:1;}
+.overall-badge .tier{font-size:7.5px; letter-spacing:0.3px; text-transform:uppercase; margin-top:2px; opacity:0.85;}
+.tier-Bronze{border-color:var(--tier-bronze); color:var(--tier-bronze);}
+.tier-Prata{border-color:var(--tier-prata); color:var(--tier-prata);}
+.tier-Ouro{border-color:var(--tier-ouro); color:var(--tier-ouro);}
+.tier-Platina{border-color:var(--tier-platina); color:var(--tier-platina);}
+.tier-Diamante{border-color:var(--tier-diamante); color:var(--tier-diamante);}
+.tier-Elite{border-color:var(--tier-elite); color:var(--tier-elite);}
+
+.name{font-weight:700; font-size:14px;}
+.meta{font-size:11.5px; color:var(--gray);}
+
+.badge{font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:0.3px; white-space:nowrap;}
+.badge-conf{background:rgba(76,175,80,0.16); color:var(--green-light);}
+.badge-wait{background:rgba(228,185,59,0.16); color:var(--gold);}
+.badge-guest{background:rgba(139,92,246,0.16); color:#a78bfa;}
+.guest-card{border-color:rgba(167,139,250,0.55) !important; background:rgba(167,139,250,0.09);}
+.guest-row{background:rgba(167,139,250,0.09); border-radius:8px; padding-left:6px; border-left:3px solid #a78bfa;}
+.badge-abs{background:rgba(229,72,77,0.14); color:var(--danger);}
+.badge-order{background:var(--green); color:#fff; font-family:'Rajdhani'; font-size:13px; min-width:22px; text-align:center;}
+
+.empty{text-align:center; padding:38px 14px; color:var(--gray);}
+.empty .icon{font-size:32px; display:block; margin-bottom:8px;}
+.empty .msg{font-size:13px; line-height:1.5;}
+
+nav#tabbar{
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:460px;
+  display:flex; background:rgba(16,19,23,0.95); backdrop-filter:blur(10px); border-top:1px solid var(--line);
+  padding:6px 4px calc(6px + env(safe-area-inset-bottom)); z-index:10;
+}
+nav#tabbar button{flex:1; background:none; border:none; color:var(--gray-dim); display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 2px; border-radius:10px;}
+nav#tabbar button .ic{font-size:18px;}
+nav#tabbar button .lb{font-size:9px; font-weight:700;}
+nav#tabbar button.active{color:var(--green-light);}
+
+.segrow{display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap;}
+.seg{flex:1; min-width:70px; text-align:center; padding:8px 4px; border-radius:9px; font-size:11.5px; font-weight:700; background:var(--card-2); border:1px solid var(--line); color:var(--gray); cursor:pointer;}
+.seg.on{background:var(--green); color:#fff; border-color:var(--green);}
+
+.scoreboard{background:radial-gradient(140% 100% at 50% -20%, #1b3a20 0%, #0d1610 70%); border:1px solid rgba(76,175,80,0.25); border-radius:16px; padding:18px 12px; margin-bottom:12px;}
+.sb-teams{display:flex; align-items:center; justify-content:space-between;}
+.sb-team{flex:1; text-align:center; min-width:0;}
+.sb-team .tname{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:12.5px; text-transform:uppercase; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.sb-team .ovr{font-size:10px; color:var(--gray); margin-top:2px;}
+.sb-score{font-family:'Rajdhani',sans-serif; font-size:44px; font-weight:700; color:var(--white); font-variant-numeric:tabular-nums;}
+.sb-x{font-family:'Rajdhani',sans-serif; font-size:16px; color:var(--gray-dim); padding:0 6px;}
+
+.evrow{display:flex; align-items:center; gap:8px; font-size:12.5px; padding:7px 0; border-bottom:1px dashed var(--line);}
+.evrow:last-child{border-bottom:none;}
+
+table.rank{width:100%; border-collapse:collapse; font-size:12.5px;}
+table.rank th{text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.3px; color:var(--gray); padding:0 5px 7px; font-weight:700;}
+table.rank td{padding:7px 5px; border-top:1px solid var(--line);}
+table.rank td.num{font-family:'Rajdhani',sans-serif; font-size:15px; color:var(--green-light); text-align:center;}
+.pos{width:20px; height:20px; border-radius:6px; background:var(--card-2); display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:var(--gray);}
+.pos.p1{background:var(--gold); color:#1a1305;} .pos.p2{background:#c8ccc8; color:#111;} .pos.p3{background:#c98a4e; color:#1b0f04;}
+
+.pillrow{display:flex; gap:8px; margin-bottom:10px;}
+.pill{flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 4px; text-align:center;}
+.pill .v{font-family:'Rajdhani',sans-serif; font-weight:700; font-size:19px;}
+.pill .l{font-size:9px; color:var(--gray); text-transform:uppercase;}
+
+.divider{height:1px; background:var(--line); margin:14px 0;}
+</style>
+</head>
+<body>
+<div id="shell">
+  <header>
+    <div class="brand"><div class="logo"><img src="icon-192.png" alt="Escudo" style="width:100%;height:100%;object-fit:cover;border-radius:9px;"></div><div><h1 id="groupName" onclick="renameGroup()">Baba TBT</h1><div class="sub" id="dateSub"></div></div></div>
+    <button class="icon-btn" onclick="showGroupCodeMenu()" title="Código da pelada" style="background:none; border:none; color:var(--white); font-size:18px; cursor:pointer;">🔑</button>
+    <button class="icon-btn" onclick="refreshData()" title="Atualizar dados" style="background:none; border:none; color:var(--white); font-size:18px; cursor:pointer;">🔄</button>
+  </header>
+  <main id="view"><div class="empty"><span class="icon">⏳</span><div class="msg">Carregando dados...</div></div></main>
+  <nav id="tabbar">
+    <button data-t="elenco" onclick="setTab('elenco')"><span class="ic">👥</span><span class="lb">ELENCO</span></button>
+    <button data-t="chegada" onclick="setTab('chegada')"><span class="ic">🕐</span><span class="lb">CHEGADA</span></button>
+    <button data-t="sorteio" onclick="setTab('sorteio')"><span class="ic">🎲</span><span class="lb">SORTEIO</span></button>
+    <button data-t="partida" onclick="setTab('partida')"><span class="ic">🥅</span><span class="lb">PARTIDA</span></button>
+    <button data-t="ranking" onclick="setTab('ranking')"><span class="ic">📈</span><span class="lb">RANKING</span></button>
+    <button data-t="campeonato" onclick="setTab('campeonato')"><span class="ic">🏆</span><span class="lb">CAMPEONATO</span></button>
+    <button data-t="financeiro" onclick="setTab('financeiro')"><span class="ic">💰</span><span class="lb">CAIXA</span></button>
+  </nav>
+</div>
+
+<script>
+/* ================= CÓDIGO DA PELADA (multi-tenant) ================= */
+const LEGACY_CODE = 'BABATBT'; // aponta pros dados que já existiam antes desse sistema
+const CODE_STORAGE_KEY = 'pelada_group_code';
+function getGroupCode(){ return localStorage.getItem(CODE_STORAGE_KEY); }
+function setGroupCode(code){ localStorage.setItem(CODE_STORAGE_KEY, code); }
+function clearGroupCode(){ localStorage.removeItem(CODE_STORAGE_KEY); }
+function generateCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem O/0/I/1, pra evitar confusão na hora de digitar
+  let code = '';
+  for(let i=0;i<6;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+/* ================= STATE ================= */
+let state = {
+  players: [],
+  session: { date:'', checkins:[], teams:[], matches:[], grupos3:[], rodadaAtual:1, rodadaFinal:null, finalistas:null, modoJogo:null, diaPelada:'sabado' },
+  settings: { groupName:'Minha Pelada' },
+  despesas: [],
+  historico: [],
+  loaded:false
+};
+let currentTab = 'elenco';
+
+function uid(){ return Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function todayLabel(){ return new Date().toLocaleDateString('pt-BR',{weekday:'long', day:'2-digit', month:'long'}); }
+function monthKey(){ return new Date().toISOString().slice(0,7); }
+function nowTime(){ return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
+
+/* ================= STORAGE ================= */
+async function apiLoad(){
+  const code = getGroupCode();
+  const r = await fetch('/api/data?code=' + encodeURIComponent(code));
+  if(!r.ok) throw new Error('Falha ao carregar dados do servidor');
+  return await r.json();
+}
+async function saveKey(key, value){
+  const code = getGroupCode();
+  try{
+    await fetch('/api/data', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({code, key, value})
+    });
+  }catch(e){
+    console.error('Erro ao salvar', key, e);
+    alert('Não consegui salvar — verifique sua conexão com a internet.');
+  }
+}
+async function savePlayers(){ await saveKey('players_pro', state.players); }
+async function saveSession(){ await saveKey('session_pro', state.session); }
+async function saveSettings(){ await saveKey('settings_pro', state.settings); }
+async function saveDespesas(){ await saveKey('despesas_pro', state.despesas); }
+async function saveHistorico(){ await saveKey('historico_pro', state.historico); }
+
+function mergeSessionData(data){
+  const incoming = data.session;
+  const isNewDay = !incoming || incoming.date !== todayKey();
+  state.session = {
+    date: todayKey(),
+    checkins: isNewDay ? [] : (incoming.checkins || []),
+    matches: (incoming && incoming.matches) || [],
+    teams: (incoming && incoming.teams) || [],
+    grupos3: (incoming && incoming.grupos3) || [],
+    rodadaAtual: (incoming && incoming.rodadaAtual) || 1,
+    rodadaFinal: (incoming && incoming.rodadaFinal) || null,
+    finalistas: (incoming && incoming.finalistas) || null,
+    modoJogo: (incoming && incoming.modoJogo) || null,
+    diaPelada: isNewDay ? diaPadrao() : ((incoming && incoming.diaPelada) || diaPadrao())
+  };
+  return isNewDay;
+}
+async function loadAll(){
+  try{
+    const data = await apiLoad();
+    state.players = data.players || [];
+    state.settings = data.settings || {groupName:'Minha Pelada'};
+    state.despesas = data.despesas || [];
+    state.historico = data.historico || [];
+    const isNewDay = mergeSessionData(data);
+    if(isNewDay) await saveSession();
+  }catch(e){
+    console.error('Erro ao carregar dados', e);
+    alert('Não consegui conectar ao servidor. Verifique sua internet e puxe a tela para atualizar.');
+    state.players = []; state.settings = {groupName:'Minha Pelada'}; state.despesas = []; state.historico = [];
+    state.session = { date: todayKey(), checkins:[], teams:[], matches:[], grupos3:[], rodadaAtual:1, rodadaFinal:null, finalistas:null, modoJogo:null, diaPelada:diaPadrao() };
+  }
+  state.loaded = true;
+}
+
+/* ================= HELPERS ================= */
+function getPlayer(id){ return state.players.find(p=>p.id===id); }
+function jogaQuinta(p){ return p.diaQuinta!==false; }
+function jogaSabado(p){ return p.diaSabado!==false; }
+function jogaNoDia(p, dia){ return dia==='quinta' ? jogaQuinta(p) : jogaSabado(p); }
+function diaPadrao(){ return new Date().getDay()===4 ? 'quinta' : 'sabado'; }
+function diaAtualLabel(){ return state.session.diaPelada==='quinta' ? 'Quinta-feira' : 'Sábado'; }
+async function setDiaPelada(dia){
+  state.session.diaPelada = dia;
+  await saveSession();
+  render();
+}
+function isCheckedIn(id){ return state.session.checkins.some(c=>c.playerId===id); }
+function tierOf(level){
+  return {1:'Bronze', 2:'Prata', 3:'Ouro', 4:'Platina', 5:'Elite'}[level] || 'Bronze';
+}
+function overallBadge(p){
+  return `<div class="overall-badge tier-${tierOf(p.level)}"><div class="num">${p.level}</div><div class="tier">${tierOf(p.level)}</div></div>`;
+}
+function statusBadge(s){
+  return {confirmado:'<span class="badge badge-conf">Confirmado</span>', ausente:'<span class="badge badge-abs">Ausente</span>',
+    espera:'<span class="badge badge-wait">Lista de espera</span>'}[s] || '';
+}
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+function teamColorName(i){
+  const t = state.session.teams && state.session.teams[i];
+  if(t && t.name) return t.name;
+  return 'Time ' + (i+1);
+}
+function teamColorHex(i){ return ['#2E7D32','#B0B7BD','#3D8FB3','#3a3f47','#C0392B','#E4B93B','#8B5CF6','#E08A2E'][i % 8]; }
+
+/* ================= RENDER DISPATCH ================= */
+function setTab(tab){
+  currentTab = tab;
+  perfilAberto = null;
+  resumoAnualAberto = false;
+  simulacaoAberta = false;
+  document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.t===tab));
+  refreshData();
+}
+async function refreshData(){
+  try{
+    const data = await apiLoad();
+    state.players = data.players || [];
+    state.settings = data.settings || {groupName:'Minha Pelada'};
+    state.despesas = data.despesas || [];
+    state.historico = data.historico || [];
+    mergeSessionData(data);
+  }catch(e){ console.warn('Não consegui atualizar agora', e); }
+  render();
+}
+let perfilAberto = null;
+let resumoAnualAberto = false;
+let simulacaoAberta = false;
+let simulacaoJogos = [];
+function abrirPerfil(playerId){ perfilAberto = playerId; render(); }
+function fecharPerfil(){ perfilAberto = null; render(); }
+function abrirResumoAnual(){ resumoAnualAberto = true; render(); }
+function fecharResumoAnual(){ resumoAnualAberto = false; render(); }
+function abrirSimulacao(){ simulacaoAberta = true; render(); }
+function fecharSimulacao(){ simulacaoAberta = false; render(); }
+function render(){
+  document.getElementById('dateSub').textContent = todayLabel();
+  document.getElementById('groupName').textContent = state.settings.groupName;
+  const view = document.getElementById('view');
+  if(!state.loaded){ view.innerHTML = '<div class="empty"><span class="icon">⏳</span><div class="msg">Carregando...</div></div>'; return; }
+  if(perfilAberto){ view.innerHTML = renderPerfilJogador(perfilAberto); return; }
+  if(resumoAnualAberto){ view.innerHTML = renderResumoAnual(); return; }
+  if(simulacaoAberta){ view.innerHTML = renderSimulacao(); return; }
+  if(currentTab==='elenco') view.innerHTML = renderElenco();
+  else if(currentTab==='chegada') view.innerHTML = renderChegada();
+  else if(currentTab==='sorteio') view.innerHTML = renderSorteio();
+  else if(currentTab==='partida') view.innerHTML = renderPartida();
+  else if(currentTab==='ranking') view.innerHTML = renderRanking();
+  else if(currentTab==='campeonato') view.innerHTML = renderCampeonato();
+  else if(currentTab==='financeiro'){ view.innerHTML = renderFinanceiro(); desenharQrPix(); }
+}
+function renderResumoAnual(){
+  const mk = currentFinanceiroMonth();
+  const year = mk.split('-')[0];
+  const players = state.players.filter(p=>!p.guest).sort((a,b)=>a.name.localeCompare(b.name));
+  let html = `<button class="btn btn-ghost btn-sm" onclick="fecharResumoAnual()">← Voltar</button>`;
+  html += `<div class="eyebrow" style="margin-top:10px;">Resumo de ${year} <small>todos os associados</small></div>`;
+
+  if(players.length===0){
+    html += `<div class="empty"><span class="icon">💰</span><div class="msg">Cadastre associados na aba Elenco primeiro.</div></div>`;
+    return html;
+  }
+
+  let emDia=0, comPendencia=0;
+  const linhas = players.map(p=>{
+    const duesAno = (p.dues||[]).filter(d=>d.month && d.month.startsWith(year+'-'));
+    const pagos = duesAno.filter(d=>d.status==='pago');
+    const pendentes = duesAno.filter(d=>d.status!=='pago');
+    const valorPago = pagos.reduce((s,d)=>s+d.value,0);
+    const valorPendente = pendentes.reduce((s,d)=>s+d.value,0);
+    if(duesAno.length>0 && pendentes.length===0) emDia++;
+    else if(pendentes.length>0) comPendencia++;
+    return { p, mesesPagos:pagos.length, mesesPendentes:pendentes.length, valorPago, valorPendente, temCobranca:duesAno.length>0 };
+  });
+
+  html += `<div class="pillrow">
+    <div class="pill"><div class="v">${emDia}</div><div class="l">Em dia</div></div>
+    <div class="pill"><div class="v">${comPendencia}</div><div class="l">Com pendência</div></div>
+    <div class="pill"><div class="v">R$${linhas.reduce((s,l)=>s+l.valorPago,0)}</div><div class="l">Total recebido</div></div>
+  </div>`;
+
+  linhas.sort((a,b)=> b.mesesPendentes - a.mesesPendentes || a.p.name.localeCompare(b.p.name));
+  html += `<div class="card">`;
+  linhas.forEach(l=>{
+    html += `<div class="row between" style="padding:8px 0; border-top:1px solid var(--line);">
+      <div>
+        <div class="name" style="font-size:14px; cursor:pointer; text-decoration:underline dotted;" onclick="abrirPerfil('${l.p.id}')">${escapeHtml(l.p.name)}</div>
+        <div class="meta">${l.temCobranca ? `${l.mesesPagos} pago(s) · ${l.mesesPendentes} pendente(s)` : 'sem cobrança lançada no ano'}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="meta" style="color:var(--green-light);">R$${l.valorPago}</div>
+        ${l.valorPendente>0 ? `<div class="meta" style="color:var(--gold);">R$${l.valorPendente} em aberto</div>` : ''}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+function renderPerfilJogador(playerId){
+  const p = getPlayer(playerId);
+  if(!p) return `<button class="btn btn-ghost btn-sm" onclick="fecharPerfil()">← Voltar</button><div class="empty" style="margin-top:10px;"><span class="icon">👤</span><div class="msg">Jogador não encontrado.</div></div>`;
+  const pct = (p.matchesPlayed||0)>0 ? Math.round((p.wins||0)/p.matchesPlayed*100) : 0;
+  let html = `<button class="btn btn-ghost btn-sm" onclick="fecharPerfil()">← Voltar</button>`;
+  html += `<div class="card" style="text-align:center; margin-top:10px;">
+    <div style="display:flex; justify-content:center; margin-bottom:8px;">${overallBadge(p)}</div>
+    <div class="name" style="font-size:18px;">${escapeHtml(p.name)} ${p.guest?'<span class="badge badge-guest">CONVIDADO</span>':''}</div>
+    <div class="meta" style="margin-top:2px;">${p.position==='GOL'?'🧤 ':''}${p.position} · ${p.guest?'Convidado':'Associado'}</div>
+    <div style="margin-top:8px;">${statusBadge(p.status)}</div>
+  </div>`;
+  html += `<div class="pillrow">
+    <div class="pill"><div class="v">${p.matchesPlayed||0}</div><div class="l">Jogos</div></div>
+    <div class="pill"><div class="v">${p.goals||0}</div><div class="l">Gols</div></div>
+    <div class="pill"><div class="v">${p.assists||0}</div><div class="l">Assist.</div></div>
+    <div class="pill"><div class="v">${pct}%</div><div class="l">Aproveit.</div></div>
+  </div>`;
+  html += `<div class="pillrow">
+    <div class="pill"><div class="v">${p.wins||0}</div><div class="l">Vitórias</div></div>
+    <div class="pill"><div class="v">${p.yellow||0}</div><div class="l">🟨</div></div>
+    <div class="pill"><div class="v">${p.blue||0}</div><div class="l">🟦</div></div>
+    <div class="pill"><div class="v">${p.red||0}</div><div class="l">🟥</div></div>
+  </div>`;
+  if(p.position==='GOL'){
+    html += `<div class="eyebrow">🧤 Como goleiro</div>
+    <div class="pillrow">
+      <div class="pill"><div class="v">${p.gamesAsGK||0}</div><div class="l">Jogos no gol</div></div>
+      <div class="pill"><div class="v">${p.goalsConceded||0}</div><div class="l">Sofridos</div></div>
+      <div class="pill"><div class="v">${p.cleanSheets||0}</div><div class="l">Sem sofrer</div></div>
+    </div>`;
+  }
+  if(!p.guest){
+    const mk = currentFinanceiroMonth();
+    const due = (p.dues||[]).find(d=>d.month===mk);
+    html += `<div class="eyebrow">Mensalidade <small style="text-transform:capitalize;">${labelForMonth(mk)}</small></div>
+    <div class="card row between">
+      <span class="meta">${due ? `R$${due.value} · ${due.method}` : 'Sem cobrança lançada'}</span>
+      ${due ? statusBadge2(due.status) : ''}
+    </div>`;
+  }
+  html += `<button class="btn btn-outline btn-block" style="margin-top:6px;" onclick="editarEstatisticas('${p.id}')">✏️ Corrigir estatísticas manualmente</button>`;
+  html += `<button class="btn btn-primary btn-block" style="margin-top:6px;" onclick="compartilharPerfil('${p.id}')">📤 Compartilhar desempenho (imagem)</button>`;
+  return html;
+}
+function statusBadge2(status){
+  return status==='pago' ? '<span class="badge badge-conf">Pago</span>' : '<span class="badge badge-wait">Pendente</span>';
+}
+async function editarEstatisticas(playerId){
+  const p = getPlayer(playerId); if(!p) return;
+  if(!confirm(`Você vai corrigir manualmente os números de ${p.name} — use isso pra somar de volta dados que se perderam (ex: de uma rodada que sumiu). Vai passar por cada número um de cada vez. Continuar?`)) return;
+
+  const jogos = prompt('Jogos disputados:', p.matchesPlayed||0); if(jogos===null) return;
+  const gols = prompt('Gols:', p.goals||0); if(gols===null) return;
+  const assist = prompt('Assistências:', p.assists||0); if(assist===null) return;
+  const vitorias = prompt('Vitórias:', p.wins||0); if(vitorias===null) return;
+  const amarelo = prompt('Cartões amarelos:', p.yellow||0); if(amarelo===null) return;
+  const azul = prompt('Cartões azuis:', p.blue||0); if(azul===null) return;
+  const vermelho = prompt('Cartões vermelhos:', p.red||0); if(vermelho===null) return;
+
+  let jogosGK=null, sofridos=null, semSofrer=null;
+  if(p.position==='GOL'){
+    jogosGK = prompt('Jogos como goleiro:', p.gamesAsGK||0); if(jogosGK===null) return;
+    sofridos = prompt('Gols sofridos:', p.goalsConceded||0); if(sofridos===null) return;
+    semSofrer = prompt('Jogos sem sofrer gol:', p.cleanSheets||0); if(semSofrer===null) return;
+  }
+
+  p.matchesPlayed = Math.max(0, parseInt(jogos)||0);
+  p.goals = Math.max(0, parseInt(gols)||0);
+  p.assists = Math.max(0, parseInt(assist)||0);
+  p.wins = Math.max(0, parseInt(vitorias)||0);
+  p.yellow = Math.max(0, parseInt(amarelo)||0);
+  p.blue = Math.max(0, parseInt(azul)||0);
+  p.red = Math.max(0, parseInt(vermelho)||0);
+  if(p.position==='GOL'){
+    p.gamesAsGK = Math.max(0, parseInt(jogosGK)||0);
+    p.goalsConceded = Math.max(0, parseInt(sofridos)||0);
+    p.cleanSheets = Math.max(0, parseInt(semSofrer)||0);
+  }
+  await savePlayers();
+  alert('Estatísticas atualizadas!');
+  render();
+}
+function gerarImagemPerfil(playerId){
+  const p = getPlayer(playerId); if(!p) return null;
+  const pct = (p.matchesPlayed||0)>0 ? Math.round((p.wins||0)/p.matchesPlayed*100) : 0;
+  const isGK = p.position==='GOL';
+  const W = 720;
+  const headerH = 170;
+  const rowH = 44;
+  const numRows = 6 + (isGK?3:0);
+  const footerH = 46;
+  const H = headerH + numRows*rowH + footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, '#12171c');
+  grad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 26px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 42);
+
+  const tierColors = {Bronze:'#A0522D', Prata:'#B0B7BD', Ouro:'#E4B93B', Platina:'#5FC9BE', Elite:'#8B5CF6'};
+  const tc = tierColors[tierOf(p.level)] || '#8A8F98';
+  ctx.strokeStyle = tc;
+  ctx.lineWidth = 2.5;
+  roundRect(ctx, W/2-32, 56, 64, 56, 10);
+  ctx.stroke();
+  ctx.fillStyle = tc;
+  ctx.font = 'bold 26px Arial, sans-serif';
+  ctx.fillText(String(p.level), W/2, 90);
+  ctx.font = 'bold 11px Arial, sans-serif';
+  ctx.fillText(tierOf(p.level).toUpperCase(), W/2, 105);
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 24px Arial, sans-serif';
+  ctx.fillText(p.name, W/2, 140);
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '14px Arial, sans-serif';
+  ctx.fillText(`${p.position}${isGK?' 🧤':''} · ${p.guest?'Convidado':'Associado'}`, W/2, 160);
+
+  const linhas = [
+    ['Jogos', p.matchesPlayed||0],
+    ['Gols', p.goals||0],
+    ['Assistências', p.assists||0],
+    ['Vitórias', p.wins||0],
+    ['Aproveitamento', pct+'%'],
+    ['Cartões (🟨🟦🟥)', `${p.yellow||0} · ${p.blue||0} · ${p.red||0}`],
+  ];
+  if(isGK){
+    linhas.push(['Jogos no gol', p.gamesAsGK||0]);
+    linhas.push(['Gols sofridos', p.goalsConceded||0]);
+    linhas.push(['Sem sofrer gol', p.cleanSheets||0]);
+  }
+
+  let y = headerH;
+  linhas.forEach((l,i)=>{
+    if(i%2===0){ ctx.fillStyle='rgba(255,255,255,0.03)'; ctx.fillRect(24,y,W-48,rowH); }
+    ctx.fillStyle = '#8A8F98';
+    ctx.font = '16px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(l[0], 42, y+28);
+    ctx.fillStyle = '#E4B93B';
+    ctx.font = 'bold 18px Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(String(l[1]), W-42, y+28);
+    y += rowH;
+  });
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharPerfil(playerId){
+  const canvas = gerarImagemPerfil(playerId);
+  if(!canvas){ alert('Não encontrei esse jogador.'); return; }
+  await compartilharImagemGenerica(canvas, 'desempenho.png', 'Desempenho');
+}
+function renameGroup(){
+  const n = prompt('Nome da pelada:', state.settings.groupName);
+  if(n && n.trim()){ state.settings.groupName = n.trim(); saveSettings(); render(); }
+}
+
+/* ================= ONBOARDING (criar/entrar em pelada) ================= */
+function renderOnboarding(){
+  document.getElementById('tabbar').style.display = 'none';
+  document.getElementById('dateSub').textContent = '';
+  document.getElementById('groupName').textContent = 'Bem-vindo!';
+  const view = document.getElementById('view');
+  view.innerHTML = `
+    <div style="padding-top:14px; text-align:center; margin-bottom:6px;">
+      <div class="meta">Este aparelho ainda não está ligado a nenhuma pelada. Escolha uma opção abaixo:</div>
+    </div>
+    <div class="card">
+      <div class="name" style="margin-bottom:6px;">🆕 Criar uma pelada nova</div>
+      <div class="meta" style="margin-bottom:12px;">Começa vazio, pra você cadastrar do zero — nada de outra pelada aparece aqui.</div>
+      <button class="btn btn-primary btn-block" onclick="criarNovaPelada()">Criar pelada nova</button>
+    </div>
+    <div class="card">
+      <div class="name" style="margin-bottom:6px;">🔑 Entrar em uma pelada existente</div>
+      <div class="meta" style="margin-bottom:10px;">Digite o código de 6 letras/números que o organizador te passou.</div>
+      <input type="text" id="joinCodeInput" placeholder="Ex: K7XQ2P" maxlength="12" style="text-transform:uppercase; margin-bottom:10px;">
+      <button class="btn btn-outline btn-block" onclick="entrarPeladaExistente()">Entrar</button>
+    </div>
+  `;
+}
+async function criarNovaPelada(){
+  setGroupCode(generateCode());
+  await afterCodeSet();
+}
+async function entrarPeladaExistente(){
+  const raw = document.getElementById('joinCodeInput').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!raw){ alert('Digite um código válido.'); return; }
+  setGroupCode(raw);
+  await afterCodeSet();
+}
+async function afterCodeSet(){
+  document.getElementById('tabbar').style.display = '';
+  await loadAll();
+  setTab('elenco');
+}
+function showGroupCodeMenu(){
+  const code = getGroupCode();
+  const label = code === LEGACY_CODE ? `${code} (pelada original)` : code;
+  const answer = prompt(
+    `Código desta pelada: ${label}\n\n` +
+    `Pra ver os mesmos dados em outro aparelho, peça pra pessoa abrir o app e digitar esse código na tela de entrada.\n\n` +
+    `Pra TROCAR de pelada neste aparelho (por exemplo, se você organiza mais de uma), digite SAIR abaixo e confirme.\nPra só fechar, deixe em branco.`,
+    ''
+  );
+  if(answer && answer.trim().toUpperCase() === 'SAIR'){
+    if(confirm('Isso vai desconectar este aparelho desta pelada. Você poderá criar uma pelada nova ou entrar em outra com um código. Continuar?')){
+      clearGroupCode();
+      location.reload();
+    }
+  }
+}
+
+/* ================= ELENCO ================= */
+let elencoFilter = 'todos';
+let novoJogadorGuest = false;
+function renderElenco(){
+  let list = state.players.slice().sort((a,b)=>b.level-a.level);
+  if(elencoFilter==='confirmado'||elencoFilter==='ausente'||elencoFilter==='espera') list = list.filter(p=>p.status===elencoFilter);
+  if(elencoFilter==='convidados') list = list.filter(p=>p.guest);
+
+  let html = `<div class="eyebrow">Elenco <small>${state.players.length} jogador(es)</small></div>`;
+  html += `<div class="card">
+    <div class="field"><label class="lbl">Nome</label><input type="text" id="newName" placeholder="Nome do jogador"></div>
+    <div class="grid3">
+      <div class="field"><label class="lbl">Posição</label>
+        <select id="newPos"><option value="GOL">Goleiro</option><option value="ZAG">Zagueiro</option><option value="MEI" selected>Meio</option><option value="ATA">Atacante</option></select>
+      </div>
+      <div class="field"><label class="lbl">Nível (1 a 5)</label><input type="number" id="newLevel" value="3" min="1" max="5"></div>
+      <div class="field"><label class="lbl">Convidado?</label>
+        <select id="newGuest"><option value="0">Associado</option><option value="1">Convidado</option></select>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl">Joga em quais dias?</label>
+      <div class="segrow">
+        <div class="seg on" id="newDiaQuinta" onclick="toggleNewDia('quinta')">Quinta</div>
+        <div class="seg on" id="newDiaSabado" onclick="toggleNewDia('sabado')">Sábado</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl">Já lançar mensalidade? <small style="text-transform:none; font-weight:400;">(não se aplica a convidados)</small></label>
+      <div class="segrow" id="novaCobrancaToggle">
+        <div class="seg on" id="novaCobrancaNao" onclick="setNovaCobranca(false)">Não</div>
+        <div class="seg" id="novaCobrancaSim" onclick="setNovaCobranca(true)">Sim</div>
+      </div>
+    </div>
+    <div id="novaCobrancaCampos" style="display:none;">
+      <div class="grid2">
+        <div class="field"><label class="lbl">Valor mensal (R$)</label><input type="number" id="newDueValue" value="30" min="0"></div>
+        <div class="field"><label class="lbl">Forma de pagamento</label><input type="text" id="newDueMethod" value="pix"></div>
+      </div>
+      <div class="meta" style="margin-bottom:10px;">Lança a cobrança deste mês e replica automaticamente pros meses seguintes até dezembro.</div>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="addPlayer()">+ Adicionar jogador</button>
+  </div>`;
+
+  html += `<div class="segrow">
+    ${seg('todos','Todos')}${seg('confirmado','Confirmados')}${seg('espera','Espera')}${seg('ausente','Ausentes')}${seg('convidados','Convidados')}
+  </div>`;
+
+  if(list.length===0){
+    html += `<div class="empty"><span class="icon">👥</span><div class="msg">Nenhum jogador nesse filtro ainda.<br>Cadastre o elenco no formulário acima.</div></div>`;
+  } else {
+    list.forEach(p=>{
+      html += `<div class="card row between ${p.guest?'guest-card':''}">
+        <div class="row">
+          ${overallBadge(p)}
+          <div>
+            <div class="name" style="cursor:pointer; text-decoration:underline dotted;" onclick="abrirPerfil('${p.id}')">${escapeHtml(p.name)} ${p.guest?'<span class="badge badge-guest">CONVIDADO</span>':''}</div>
+            <div class="meta">${p.position} · ${p.matchesPlayed||0} jogos · ⚽${p.goals||0} 🎯${p.assists||0} 🟨${p.yellow||0} 🟦${p.blue||0} 🟥${p.red||0}</div>
+            <div style="margin-top:3px;">${jogaQuinta(p)?'<span class="badge" style="background:rgba(76,175,80,0.16); color:var(--green-light);">QUI</span> ':''}${jogaSabado(p)?'<span class="badge" style="background:rgba(228,185,59,0.16); color:var(--gold);">SÁB</span>':''}</div>
+            <div style="margin-top:4px;">${statusBadge(p.status)}</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <button class="btn btn-ghost btn-sm" onclick="editPlayer('${p.id}')">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="removePlayer('${p.id}')">✕</button>
+        </div>
+      </div>`;
+    });
+    html += `<button class="btn btn-primary btn-block" onclick="compartilharElenco()" style="margin-top:4px;">📤 Compartilhar elenco (imagem)</button>`;
+  }
+  return html;
+}
+function seg(val,label){ return `<div class="seg ${elencoFilter===val?'on':''}" onclick="elencoFilter='${val}'; render();">${label}</div>`; }
+
+let novaCobrancaAtiva = false;
+function setNovaCobranca(v){
+  novaCobrancaAtiva = v;
+  document.getElementById('novaCobrancaNao').classList.toggle('on', !v);
+  document.getElementById('novaCobrancaSim').classList.toggle('on', v);
+  document.getElementById('novaCobrancaCampos').style.display = v ? '' : 'none';
+}
+let novoDiaQuinta = true;
+let novoDiaSabado = true;
+function toggleNewDia(dia){
+  if(dia==='quinta') novoDiaQuinta = !novoDiaQuinta; else novoDiaSabado = !novoDiaSabado;
+  document.getElementById('newDiaQuinta').classList.toggle('on', novoDiaQuinta);
+  document.getElementById('newDiaSabado').classList.toggle('on', novoDiaSabado);
+}
+async function addPlayer(){
+  const name = document.getElementById('newName').value.trim();
+  if(!name){ document.getElementById('newName').focus(); return; }
+  const position = document.getElementById('newPos').value;
+  const level = Math.max(1, Math.min(5, parseInt(document.getElementById('newLevel').value)||3));
+  const guest = document.getElementById('newGuest').value==='1';
+  const novoPlayer = {
+    id:uid(), name, position, level, guest, status:'espera',
+    diaQuinta:novoDiaQuinta, diaSabado:novoDiaSabado,
+    goals:0, assists:0, yellow:0, blue:0, red:0, matchesPlayed:0, wins:0, dues:[]
+  };
+  if(novaCobrancaAtiva && !guest){
+    const valor = parseFloat(document.getElementById('newDueValue').value) || 0;
+    const metodo = (document.getElementById('newDueMethod').value||'pix').trim() || 'pix';
+    const mkAtual = monthKey();
+    const ano = mkAtual.split('-')[0];
+    const mesInicial = parseInt(mkAtual.split('-')[1]);
+    for(let m=mesInicial; m<=12; m++){
+      novoPlayer.dues.push({id:uid(), month: ano+'-'+String(m).padStart(2,'0'), value:valor, method:metodo, status:'pendente'});
+    }
+  }
+  state.players.push(novoPlayer);
+  novaCobrancaAtiva = false;
+  novoDiaQuinta = true;
+  novoDiaSabado = true;
+  await savePlayers();
+  render();
+}
+function gerarImagemElenco(){
+  const players = state.players.slice().sort((a,b)=>b.level-a.level);
+  const W = 720;
+  const headerH = 150;
+  const rowH = 46;
+  const footerH = 46;
+  const H = headerH + Math.max(players.length,1)*rowH + footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, '#12171c');
+  grad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 30px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 50);
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 22px Arial, sans-serif';
+  ctx.fillText('Elenco', W/2, 82);
+
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '15px Arial, sans-serif';
+  ctx.fillText(`${players.length} jogador(es) — ${todayLabel()}`, W/2, 108);
+
+  let y = headerH;
+  if(players.length===0){
+    ctx.fillStyle = '#565B63';
+    ctx.font = 'italic 16px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('(nenhum jogador cadastrado)', 42, y+24);
+  }
+  players.forEach((p,i)=>{
+    if(i%2===0){
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx.fillRect(24, y, W-48, rowH);
+    }
+    // badge de nível
+    const tierColors = {Bronze:'#A0522D', Prata:'#B0B7BD', Ouro:'#E4B93B', Platina:'#5FC9BE', Elite:'#8B5CF6'};
+    const tc = tierColors[tierOf(p.level)] || '#8A8F98';
+    ctx.strokeStyle = tc;
+    ctx.lineWidth = 2;
+    roundRect(ctx, 34, y+8, 34, 30, 6);
+    ctx.stroke();
+    ctx.fillStyle = tc;
+    ctx.font = 'bold 15px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(p.level), 51, y+28);
+
+    ctx.fillStyle = p.guest ? '#a78bfa' : '#F5F6F7';
+    ctx.font = p.position==='GOL' ? 'bold 17px Arial, sans-serif' : '17px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    const tag = p.position==='GOL' ? '🧤 ' : '';
+    ctx.fillText(tag + p.name + (p.guest ? '  (convidado)' : ''), 82, y+28);
+
+    ctx.fillStyle = '#8A8F98';
+    ctx.font = '14px Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(p.position, W-42, y+28);
+    y += rowH;
+  });
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharImagemGenerica(canvas, filename, titulo){
+  canvas.toBlob(async (blob)=>{
+    if(!blob){ alert('Não consegui gerar a imagem.'); return; }
+    const file = new File([blob], filename, {type:'image/png'});
+    try{
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({ files:[file], title:titulo, text:`${titulo} — ${state.settings.groupName}` });
+        return;
+      }
+    }catch(e){
+      if(e && e.name==='AbortError') return;
+      console.error(e);
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert('Esse aparelho não abriu o compartilhamento direto, então a imagem foi baixada — é só anexar ela manualmente no WhatsApp.');
+  }, 'image/png', 0.95);
+}
+async function compartilharElenco(){
+  if(state.players.length===0){ alert('Cadastre pelo menos um jogador primeiro.'); return; }
+  await compartilharImagemGenerica(gerarImagemElenco(), 'elenco.png', 'Elenco');
+}
+async function editPlayer(id){
+  const p = getPlayer(id); if(!p) return;
+  const name = prompt('Nome:', p.name); if(name===null) return;
+  const position = (prompt('Posição (GOL, ZAG, MEI, ATA):', p.position) || p.position).toUpperCase();
+  const levelStr = prompt('Nível técnico (1 a 5):', p.level); if(levelStr===null) return;
+  const level = Math.max(1, Math.min(5, parseInt(levelStr)||p.level));
+  const statusStr = prompt('Associado ou Convidado? Digite "associado" ou "convidado":', p.guest ? 'convidado' : 'associado');
+  if(statusStr===null) return;
+  const guest = statusStr.trim().toLowerCase().startsWith('c');
+  p.name = name.trim() || p.name;
+  p.position = ['GOL','ZAG','MEI','ATA'].includes(position) ? position : p.position;
+  p.level = level;
+  const diaQ = confirm('Esse jogador joga na QUINTA-FEIRA?\n\nOK = sim, Cancelar = não');
+  const diaS = confirm('Esse jogador joga no SÁBADO?\n\nOK = sim, Cancelar = não');
+  p.guest = guest;
+  p.diaQuinta = diaQ;
+  p.diaSabado = diaS;
+  await savePlayers();
+  render();
+}
+async function removePlayer(id){
+  if(!confirm('Remover este jogador? O histórico de estatísticas dele será perdido.')) return;
+  state.players = state.players.filter(p=>p.id!==id);
+  state.session.checkins = state.session.checkins.filter(c=>c.playerId!==id);
+  await savePlayers(); await saveSession();
+  render();
+}
+
+/* ================= CHEGADA (confirmação + ordem) ================= */
+function renderChegada(){
+  const all = state.players.filter(p=>jogaNoDia(p, state.session.diaPelada)).sort((a,b)=>a.name.localeCompare(b.name));
+  const arrived = state.session.checkins.slice().sort((a,b)=>a.order-b.order);
+  const confirmedNotArrived = all.filter(p=>p.status==='confirmado' && !isCheckedIn(p.id));
+
+  let html = `<div class="card" style="padding:10px 12px;">
+    <div class="segrow" style="margin-bottom:0;">
+      <div class="seg ${state.session.diaPelada==='quinta'?'on':''}" onclick="setDiaPelada('quinta')">📅 Quinta</div>
+      <div class="seg ${state.session.diaPelada==='sabado'?'on':''}" onclick="setDiaPelada('sabado')">📅 Sábado</div>
+    </div>
+  </div>`;
+  html += `<div class="eyebrow">Ordem de chegada <small>${arrived.length} presente(s) · ${diaAtualLabel()}</small></div>`;
+  if(arrived.length>0){
+    html += `<div class="card">`;
+    arrived.forEach(c=>{
+      const p = getPlayer(c.playerId); if(!p) return;
+      html += `<div class="row between ${p.guest?'guest-row':''}" style="padding:6px 4px;">
+        <div class="row"><span class="badge badge-order">${c.order}</span>
+          <div><div class="name">${escapeHtml(p.name)} ${p.guest?'<span class="badge badge-guest">CONVIDADO</span>':''}</div><div class="meta">chegou às ${c.time}</div></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="undoCheckin('${p.id}')">Desfazer</button>
+      </div>`;
+    });
+    html += `</div>`;
+  } else {
+    html += `<div class="empty"><span class="icon">🕐</span><div class="msg">Ninguém chegou ainda hoje.</div></div>`;
+  }
+
+  html += `<div class="eyebrow">Confirmados aguardando chegada</div>`;
+  if(confirmedNotArrived.length===0){
+    html += `<div class="empty"><span class="icon">✅</span><div class="msg">Sem confirmados pendentes de check-in.</div></div>`;
+  } else {
+    confirmedNotArrived.forEach(p=>{
+      html += `<div class="card row between ${p.guest?'guest-card':''}">
+        <div class="name">${escapeHtml(p.name)} ${p.guest?'<span class="badge badge-guest">CONVIDADO</span>':''}</div>
+        <button class="btn btn-primary btn-sm" onclick="checkin('${p.id}')">Cheguei</button>
+      </div>`;
+    });
+  }
+
+  html += `<div class="eyebrow">Confirmação de presença</div>`;
+  if(all.length===0){
+    html += `<div class="empty"><span class="icon">👥</span><div class="msg">Cadastre jogadores na aba Elenco primeiro.</div></div>`;
+  } else {
+    all.forEach(p=>{
+      html += `<div class="card row between ${p.guest?'guest-card':''}">
+        <div class="name">${escapeHtml(p.name)} ${p.guest?'<span class="badge badge-guest">CONVIDADO</span>':''}</div>
+        <div class="row" style="gap:4px;">
+          <button class="btn btn-sm ${p.status==='confirmado'?'btn-primary':'btn-outline'}" onclick="setStatus('${p.id}','confirmado')">Confirmar</button>
+          <button class="btn btn-sm ${p.status==='espera'?'btn-outline':'btn-outline'}" style="${p.status==='espera'?'border-color:var(--gold); color:var(--gold);':''}" onclick="setStatus('${p.id}','espera')">Espera</button>
+          <button class="btn btn-sm ${p.status==='ausente'?'btn-danger':'btn-outline'}" onclick="setStatus('${p.id}','ausente')">Ausente</button>
+        </div>
+      </div>`;
+    });
+  }
+
+  html += `<div class="divider"></div>
+    <button class="btn btn-danger btn-block" onclick="encerrarPeladaDoDia()">🏁 Encerrar pelada de hoje (zera chegada, confirmações e partidas)</button>`;
+  return html;
+}
+async function setStatus(id, status){
+  const p = getPlayer(id); if(!p) return;
+  p.status = status;
+  if(status!=='confirmado') state.session.checkins = state.session.checkins.filter(c=>c.playerId!==id);
+  await savePlayers(); await saveSession();
+  render();
+}
+async function checkin(id){
+  const order = state.session.checkins.length + 1;
+  state.session.checkins.push({playerId:id, order, time:nowTime()});
+  await saveSession();
+  render();
+}
+async function undoCheckin(id){
+  state.session.checkins = state.session.checkins.filter(c=>c.playerId!==id);
+  state.session.checkins.sort((a,b)=>a.order-b.order).forEach((c,i)=>c.order=i+1);
+  await saveSession();
+  render();
+}
+async function encerrarPeladaDoDia(){
+  if(!confirm('Isso vai encerrar a pelada de hoje: zera a chegada e as confirmações de presença. Os times sorteados e o histórico de partidas (usado na classificação) continuam salvos — use o botão "Resetar times" na aba Sorteio se quiser começar um campeonato novo do zero. Continuar?')) return;
+  state.players.forEach(p=>{ p.status = 'espera'; });
+  state.session.checkins = [];
+  await savePlayers();
+  await saveSession();
+  render();
+}
+
+/* ================= SORTEIO ================= */
+let sorteioNumTeams = 2;
+let sorteioMode = 'balanceado';
+let manualAssignment = {}; // { playerId: teamIndex }
+let grupoSelecaoAtual = []; // ids sendo selecionados pra formar um novo grupo de 3
+
+function resetManual(){ manualAssignment = {}; }
+
+function renderGruposSection(n){
+  const presentesAssoc = associadosPresentes();
+  const grupos = state.session.grupos3 || [];
+  const jaAgrupados = new Set(grupos.flatMap(g=>g.players));
+  const disponiveis = presentesAssoc.filter(p=>!jaAgrupados.has(p.id));
+
+  let html = `<div class="card">
+    <label class="lbl">Grupos de 3 (ficam sempre em times diferentes)</label>
+    <div class="meta" style="margin-bottom:8px;">Escolha trios de associados (ex: os mais fortes, ou um grupo de amigos) pra garantir que cada um caia num time diferente no sorteio.</div>`;
+
+  if(n<3){
+    html += `<div class="meta" style="margin-bottom:8px; color:var(--gold);">⚠️ Com menos de 3 times, o grupo pode não conseguir se separar completamente.</div>`;
+  }
+
+  if(grupos.length>0){
+    grupos.forEach((g,gi)=>{
+      const nomes = g.players.map(id=>getPlayer(id)?.name || '?').join(', ');
+      html += `<div class="row between" style="padding:6px 0; border-bottom:1px dashed var(--line);">
+        <div class="meta">Grupo ${gi+1}: <b style="color:var(--white);">${escapeHtml(nomes)}</b></div>
+        <button class="btn btn-danger btn-sm" onclick="removerGrupo3(${gi})">✕</button>
+      </div>`;
+    });
+  }
+
+  if(disponiveis.length>0){
+    html += `<div class="meta" style="margin:10px 0 6px;">Toque em 3 associados presentes pra formar um grupo:</div>
+      <div class="row" style="gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+        ${disponiveis.map(p=>`<div class="seg ${grupoSelecaoAtual.includes(p.id)?'on':''}" style="flex:none; padding:8px 12px;" onclick="toggleGrupoSelecao('${p.id}')">${escapeHtml(p.name)}</div>`).join('')}
+      </div>
+      <button class="btn btn-outline btn-block" onclick="criarGrupo3()" ${grupoSelecaoAtual.length!==3?'disabled':''}>Criar grupo (${grupoSelecaoAtual.length}/3 selecionado(s))</button>`;
+  } else if(grupos.length===0){
+    html += `<div class="meta">Nenhum associado disponível pra agrupar ainda — marque a chegada de mais gente na aba Chegada.</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+function toggleGrupoSelecao(playerId){
+  const idx = grupoSelecaoAtual.indexOf(playerId);
+  if(idx>=0){ grupoSelecaoAtual.splice(idx,1); render(); return; }
+  if(grupoSelecaoAtual.length>=3){ alert('Esse grupo já tem 3 jogadores. Remova um antes de adicionar outro.'); return; }
+  grupoSelecaoAtual.push(playerId);
+  render();
+}
+async function criarGrupo3(){
+  if(grupoSelecaoAtual.length!==3) return;
+  state.session.grupos3 = state.session.grupos3 || [];
+  state.session.grupos3.push({id:uid(), players:[...grupoSelecaoAtual]});
+  grupoSelecaoAtual = [];
+  await saveSession();
+  render();
+}
+async function removerGrupo3(idx){
+  state.session.grupos3 = state.session.grupos3 || [];
+  state.session.grupos3.splice(idx,1);
+  await saveSession();
+  render();
+}
+
+function associadosPresentes(){
+  return state.session.checkins.map(c=>getPlayer(c.playerId)).filter(p=>p && !p.guest);
+}
+function convidadosPresentes(){
+  return state.session.checkins.map(c=>getPlayer(c.playerId)).filter(p=>p && p.guest);
+}
+function regra6Garantida(n){ return associadosPresentes().length >= n*6; }
+function effectiveNumTeams(){ return sorteioNumTeams; }
+function computeTargets(n, count){
+  if(n<=0) return [];
+  if(count >= n*6){
+    // garante 6 por time e distribui o excedente (7º, 8º jogador...) de forma equilibrada entre os times
+    const target = Array(n).fill(6);
+    let leftover = count - n*6;
+    let i = 0;
+    while(leftover>0){
+      target[i % n]++;
+      leftover--;
+      i++;
+    }
+    return target;
+  }
+  // sem associados suficientes pra garantir 6 em cada — divide o mais equilibrado possível
+  const base = Math.floor(count/n);
+  const extra = count % n;
+  return Array.from({length:n}, (_,i)=> base + (i<extra?1:0));
+}
+
+function renderSorteio(){
+  const presentes = state.session.checkins.map(c=>getPlayer(c.playerId)).filter(Boolean);
+  const qtdAssociados = associadosPresentes().length;
+  const qtdConvidados = convidadosPresentes().length;
+  const n = effectiveNumTeams();
+  const regraAtiva = regra6Garantida(n);
+
+  let html = `<div class="eyebrow">Sorteio de times <small>${presentes.length} presente(s)</small></div>`;
+  html += `<div class="card">`;
+  html += `<label class="lbl">Número de times</label>
+    <div class="segrow">${[2,3,4].map(x=>`<div class="seg ${x===sorteioNumTeams?'on':''}" onclick="sorteioNumTeams=${x}; resetManual(); render();">${x} times</div>`).join('')}</div>`;
+  if(regraAtiva){
+    html += `<div class="meta" style="margin-bottom:10px;">🔒 <b>Regra dos 6 ativa:</b> com ${qtdAssociados} associados presentes, o sorteio tenta formar grupos de 6 por time dentro dos ${n} times escolhidos.</div>`;
+  } else {
+    html += `<div class="meta" style="margin-bottom:10px;">Com 18 ou mais associados presentes, o sorteio passa a tentar formar grupos de 6 por time.</div>`;
+  }
+  html += `<label class="lbl">Modo</label>
+    <div class="segrow">
+      <div class="seg ${sorteioMode==='aleatorio'?'on':''}" onclick="sorteioMode='aleatorio'; resetManual(); render();">🔢 Por chegada</div>
+      <div class="seg ${sorteioMode==='balanceado'?'on':''}" onclick="sorteioMode='balanceado'; resetManual(); render();">⚖️ Balanceado</div>
+      <div class="seg ${sorteioMode==='manual'?'on':''}" onclick="sorteioMode='manual'; resetManual(); render();">✋ Manual</div>
+    </div>
+    ${sorteioMode==='aleatorio' ? '<div class="meta" style="margin-bottom:10px;">Preenche os times na ordem em que os associados chegaram (o 1º que chegou vai pro Time 1, o 2º pro Time 2, e assim por diante).</div>' : ''}
+    ${sorteioMode==='balanceado' ? '<div class="meta" style="margin-bottom:10px;">Ordena os associados por nível técnico (do mais alto pro mais baixo) e, em caso de empate de nível, usa a ordem de chegada — distribuindo sempre pro time com menor soma de nível no momento, goleiros um por time primeiro.</div>' : ''}
+    ${sorteioMode==='manual' ? '<div class="meta" style="margin-bottom:10px;">Escolha o time de cada atleta manualmente e confirme quando terminar.</div>' : ''}
+    ${qtdConvidados>0 ? `<div class="meta" style="margin-bottom:10px;">👥 ${qtdConvidados} convidado(s) — entram só depois dos associados, um por time, também na ordem de chegada.</div>` : ''}
+    ${sorteioMode!=='manual' ? `<button class="btn btn-primary btn-block" onclick="sortear()" ${n<1 || qtdAssociados < n ? 'disabled' : ''}>Sortear times</button>
+    ${n<1 || qtdAssociados < n ? `<div class="meta" style="margin-top:8px;">É preciso pelo menos 1 associado por time (${qtdAssociados}/${n}). Marque mais chegadas ou reduza o número de times.</div>` : ''}` : ''}
+  </div>`;
+
+  if(sorteioMode!=='manual'){
+    html += renderGruposSection(n);
+  }
+
+  if(sorteioMode==='manual'){
+    if(presentes.length===0){
+      html += `<div class="empty"><span class="icon">🕐</span><div class="msg">Ninguém fez check-in ainda na aba Chegada.</div></div>`;
+    } else {
+      const counts = Array.from({length:n}, (_,i)=>presentes.filter(p=>manualAssignment[p.id]===i).length);
+      html += `<div class="card">
+        <div class="row" style="gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+          ${counts.map((c,i)=>`<span class="badge" style="background:${teamColorHex(i)}; color:#fff;">${teamColorName(i)}: ${c}</span>`).join('')}
+        </div>
+      </div>`;
+      presentes.forEach(p=>{
+        html += `<div class="card ${p.guest?'guest-card':''}">
+          <div class="row between" style="margin-bottom:8px;">
+            <div class="row">${overallBadge(p)}<div><div class="name">${escapeHtml(p.name)} ${p.guest?'<span class="badge badge-guest">CONVIDADO</span>':''}</div><div class="meta">${p.position}</div></div></div>
+          </div>
+          <div class="segrow" style="margin-bottom:0;">
+            ${Array.from({length:n}, (_,i)=>`<div class="seg ${manualAssignment[p.id]===i?'on':''}" style="${manualAssignment[p.id]===i?`background:${teamColorHex(i)}; border-color:${teamColorHex(i)};`:''}" onclick="setManualTeam('${p.id}',${i})">${teamColorName(i)}</div>`).join('')}
+          </div>
+        </div>`;
+      });
+      const assignedCount = presentes.filter(p=>manualAssignment[p.id]!==undefined).length;
+      html += `<button class="btn btn-primary btn-block" onclick="confirmarSorteioManual()" ${assignedCount===0?'disabled':''}>Confirmar times (${assignedCount}/${presentes.length} escolhido(s))</button>`;
+    }
+  }
+
+  if(state.session.teams.length>0){
+    html += `<div class="eyebrow" style="margin-top:14px;">Times sorteados <small>toque no time ao lado de alguém pra mudar</small></div>`;
+    state.session.teams.forEach((team,i)=>{
+      const avg = team.players.length ? Math.round(team.players.reduce((s,pid)=>s+(getPlayer(pid)?.level||0),0)/team.players.length) : 0;
+      html += `<div class="card">
+        <div class="row between" style="margin-bottom:8px;">
+          <div class="row" style="gap:6px;">
+            <span class="badge" style="background:${teamColorHex(i)}; color:#fff;">${teamColorName(i)}</span>
+            <button class="btn btn-ghost btn-sm" onclick="renomearTime(${i})" title="Renomear time">✏️</button>
+          </div>
+          <span class="meta">nível médio ${avg}</span>
+        </div>`;
+      team.players.forEach(pid=>{
+        const p = getPlayer(pid); if(!p) return;
+        html += `<div class="row between ${p.guest?'guest-row':''}" style="padding:4px 4px;">
+          <div class="row">${overallBadge(p)}<div><div class="name">${p.position==='GOL'?'🧤 ':''}${escapeHtml(p.name)} ${p.guest?'<span class="badge badge-guest">CONVIDADO</span>':''}</div><div class="meta">${p.position}</div></div></div>
+          <select onchange="moverJogadorDeTime('${pid}', this.value)" style="width:auto; padding:6px 8px; font-size:11px;">
+            ${state.session.teams.map((tm,ti)=>`<option value="${ti}" ${ti===i?'selected':''}>${teamColorName(ti)}</option>`).join('')}
+          </select>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    html += `<button class="btn btn-primary btn-block" onclick="compartilharTimes()" style="margin-bottom:6px;">📤 Compartilhar times (imagem)</button>`;
+    html += `<button class="btn btn-outline btn-block" onclick="resetarTimes()" style="margin-bottom:6px;">🗑️ Resetar times sorteados</button>`;
+    html += `<div class="meta" style="text-align:center; margin-bottom:6px;">Os times ficam salvos mesmo se você fechar o app — só somem se você resetar aqui.</div>`;
+  }
+  return html;
+}
+function setManualTeam(playerId, teamIdx){
+  manualAssignment[playerId] = teamIdx;
+  render();
+}
+async function confirmarSorteioManual(){
+  const presentes = state.session.checkins.map(c=>getPlayer(c.playerId)).filter(Boolean);
+  const n = effectiveNumTeams();
+  const teams = Array.from({length:n}, ()=>({players:[]}));
+  let unassigned = 0;
+  presentes.forEach(p=>{
+    const t = manualAssignment[p.id];
+    if(t===undefined || t>=n){ unassigned++; return; }
+    teams[t].players.push(p.id);
+  });
+  if(unassigned>0 && !confirm(`${unassigned} jogador(es) ainda sem time escolhido — eles ficarão de fora dos times. Continuar mesmo assim?`)) return;
+  state.session.teams = teams;
+  state.session.matches = [];
+  state.session.modoJogo = null;
+  state.session.rodadaAtual = 1;
+  state.session.rodadaFinal = null;
+  state.session.finalistas = null;
+  rodadaVisualizada = 1;
+  await saveSession();
+  render();
+}
+async function moverJogadorDeTime(playerId, newTeamIdxStr){
+  const newIdx = parseInt(newTeamIdxStr);
+  state.session.teams.forEach(t=>{ t.players = t.players.filter(id=>id!==playerId); });
+  state.session.teams[newIdx].players.push(playerId);
+  await saveSession();
+  render();
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function gerarImagemTimes(){
+  const teams = state.session.teams;
+  const W = 720;
+  const headerH = 150;
+  const teamHeaderH = 54;
+  const rowH = 38;
+  const teamGap = 20;
+  const footerH = 46;
+  let H = headerH;
+  teams.forEach(t=> H += teamHeaderH + Math.max(t.players.length,1)*rowH + teamGap);
+  H += footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, '#12171c');
+  grad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 30px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 50);
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 22px Arial, sans-serif';
+  ctx.fillText('Times sorteados', W/2, 82);
+
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '15px Arial, sans-serif';
+  ctx.fillText(todayLabel(), W/2, 108);
+
+  let y = headerH;
+  teams.forEach((team,i)=>{
+    ctx.fillStyle = teamColorHex(i);
+    roundRect(ctx, 24, y, W-48, teamHeaderH-14, 10);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(teamColorName(i), 42, y + (teamHeaderH-14)/2 + 7);
+    y += teamHeaderH;
+
+    if(team.players.length===0){
+      ctx.fillStyle = '#565B63';
+      ctx.font = 'italic 16px Arial, sans-serif';
+      ctx.fillText('(sem jogadores)', 42, y+24);
+      y += rowH;
+    }
+    team.players.forEach(pid=>{
+      const p = getPlayer(pid); if(!p) return;
+      ctx.fillStyle = '#F5F6F7';
+      ctx.font = '17px Arial, sans-serif';
+      ctx.textAlign = 'left';
+      const tag = p.position==='GOL' ? '🧤 ' : '•  ';
+      ctx.fillText(tag + p.name + (p.guest ? '  (convidado)' : ''), 42, y+25);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#8A8F98';
+      ctx.font = '14px Arial, sans-serif';
+      ctx.fillText(p.position, W-42, y+25);
+      y += rowH;
+    });
+    y += teamGap;
+  });
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharTimes(){
+  if(!state.session.teams || state.session.teams.length===0){ alert('Sorteie os times primeiro.'); return; }
+  await compartilharImagemGenerica(gerarImagemTimes(), 'times-sorteados.png', 'Times sorteados');
+}
+function checkinOrderOf(playerId){
+  const c = state.session.checkins.find(c=>c.playerId===playerId);
+  return c ? c.order : Infinity;
+}
+function orderByArrival(players){
+  return players.slice().sort((a,b)=>checkinOrderOf(a.id)-checkinOrderOf(b.id));
+}
+function distribuirConvidados(convidados, teams, n){
+  const ordem = orderByArrival(convidados);
+  let i = 0;
+  while(i < ordem.length){
+    for(let t=0; t<n && i<ordem.length; t++){
+      teams[t].players.push(ordem[i].id);
+      i++;
+    }
+  }
+}
+function distribuirGrupos(teams, targets, idsDisponiveis){
+  const grupos = state.session.grupos3 || [];
+  const jaColocados = new Set();
+  grupos.forEach(g=>{
+    const membros = orderByArrival(g.players.filter(id=>idsDisponiveis.has(id)).map(getPlayer).filter(Boolean));
+    const timesUsados = new Set();
+    membros.forEach(p=>{
+      let best=-1;
+      // 1ª tentativa: time livre (sob o alvo) que ainda não tem ninguém desse grupo
+      for(let i=0;i<teams.length;i++){
+        if(timesUsados.has(i)) continue;
+        if(teams[i].players.length >= targets[i]) continue;
+        if(best===-1 || teams[i].players.length < teams[best].players.length) best=i;
+      }
+      // 2ª tentativa (sem time livre único): qualquer time sob o alvo, mesmo repetindo
+      if(best===-1){
+        for(let i=0;i<teams.length;i++){
+          if(teams[i].players.length >= targets[i]) continue;
+          if(best===-1 || teams[i].players.length < teams[best].players.length) best=i;
+        }
+      }
+      if(best===-1) return;
+      teams[best].players.push(p.id);
+      timesUsados.add(best);
+      jaColocados.add(p.id);
+    });
+  });
+  return jaColocados;
+}
+async function renomearTime(i){
+  if(!state.session.teams[i]) return;
+  const atual = teamColorName(i);
+  const novo = prompt('Nome do time:', atual);
+  if(novo===null) return;
+  const nome = novo.trim();
+  state.session.teams[i].name = nome || null;
+  await saveSession();
+  render();
+}
+async function resetarTimes(){
+  if(!confirm('Isso vai apagar os times sorteados, os grupos de 3, todo o histórico de partidas (usado na classificação) e volta a contagem de rodadas pra 1 — a chegada de hoje não é afetada. Use isso quando quiser começar um campeonato novo do zero. Continuar?')) return;
+  state.session.teams = [];
+  state.session.grupos3 = [];
+  state.session.matches = [];
+  state.session.rodadaAtual = 1;
+  await saveSession();
+  render();
+}
+async function sortear(){
+  const associados = associadosPresentes();
+  const convidados = convidadosPresentes();
+  const n = effectiveNumTeams();
+  if(n<1){ alert('Não há jogadores suficientes pra formar times.'); return; }
+  const teams = Array.from({length:n}, ()=>({players:[]}));
+  const targets = computeTargets(n, associados.length);
+  const idsDisponiveis = new Set(associados.map(p=>p.id));
+  const jaColocados = distribuirGrupos(teams, targets, idsDisponiveis);
+
+  if(sorteioMode==='aleatorio'){
+    const goleiros = orderByArrival(associados.filter(p=>p.position==='GOL' && !jaColocados.has(p.id)));
+    const outros = orderByArrival(associados.filter(p=>p.position!=='GOL' && !jaColocados.has(p.id)));
+    goleiros.forEach(p=>{
+      let best=-1;
+      for(let i=0;i<n;i++){
+        if(teams[i].players.length < targets[i] && (best===-1 || teams[i].players.length < teams[best].players.length)) best=i;
+      }
+      if(best===-1) return;
+      teams[best].players.push(p.id);
+    });
+    outros.forEach(p=>{
+      let best=-1;
+      for(let i=0;i<n;i++){
+        if(teams[i].players.length >= targets[i]) continue;
+        if(best===-1 || teams[i].players.length < teams[best].players.length) best=i;
+      }
+      if(best===-1) return;
+      teams[best].players.push(p.id);
+    });
+  } else {
+    const goleiros = orderByArrival(associados.filter(p=>p.position==='GOL' && !jaColocados.has(p.id)));
+    const outros = orderByArrival(associados.filter(p=>p.position!=='GOL' && !jaColocados.has(p.id))).sort((a,b)=>b.level-a.level);
+    goleiros.forEach(p=>{
+      let best=-1;
+      for(let i=0;i<n;i++){
+        if(teams[i].players.length < targets[i] && (best===-1 || teams[i].players.length < teams[best].players.length)) best=i;
+      }
+      if(best===-1) return;
+      teams[best].players.push(p.id);
+    });
+    const sums = teams.map(t=>t.players.reduce((s,pid)=>s+(getPlayer(pid)?.level||0),0));
+    outros.forEach(p=>{
+      let best=-1;
+      for(let i=0;i<n;i++){
+        if(teams[i].players.length >= targets[i]) continue;
+        if(best===-1 || sums[i]<sums[best]) best=i;
+      }
+      if(best===-1) return;
+      teams[best].players.push(p.id);
+      sums[best]+=p.level;
+    });
+  }
+
+  // convidados só entram depois dos associados já distribuídos, um por time
+  distribuirConvidados(convidados, teams, n);
+
+  state.session.teams = teams;
+  state.session.matches = [];
+  state.session.modoJogo = null;
+  state.session.rodadaAtual = 1;
+  state.session.rodadaFinal = null;
+  state.session.finalistas = null;
+  rodadaVisualizada = 1;
+  await saveSession();
+  render();
+}
+
+/* ================= PARTIDA ================= */
+let rodadaVisualizada = null;
+let editandoPartidaId = null;
+
+function getRodadaVisualizada(){
+  if(rodadaVisualizada===null) rodadaVisualizada = state.session.rodadaAtual || 1;
+  return rodadaVisualizada;
+}
+function navegarRodada(delta){
+  const nova = getRodadaVisualizada() + delta;
+  if(nova<1) return;
+  rodadaVisualizada = nova;
+  editandoPartidaId = null;
+  render();
+}
+async function comecarRodada(){
+  if(getLiveMatch()){ alert('Encerre a partida ao vivo antes de avançar de rodada.'); return; }
+  state.session.rodadaAtual = (state.session.rodadaAtual || 1) + 1;
+  rodadaVisualizada = state.session.rodadaAtual;
+  await saveSession();
+  render();
+}
+async function escolherModo(modo){
+  state.session.modoJogo = modo;
+  await saveSession();
+  render();
+}
+async function trocarModo(){
+  if(getLiveMatch()){ alert('Encerre a partida ao vivo antes de trocar de modo.'); return; }
+  if(!confirm('Trocar o modo? Isso nao apaga as partidas ja jogadas, so volta pra tela de escolha.')) return;
+  state.session.modoJogo = null;
+  await saveSession();
+  render();
+}
+function renderPartidaNormal(){
+  const teams = state.session.teams;
+  const live = getLiveMatch();
+  let html = `<div class="card row between" style="padding:10px 12px;">
+    <div><div class="name">&#9917; Partida normal</div><div class="meta">sem campeonato</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="trocarModo()">Trocar modo</button>
+  </div>`;
+  if(!live){
+    html += `<div class="card">
+      <label class="lbl">Times da partida</label>
+      <div class="grid2" style="margin-bottom:10px;">
+        <select id="selTeamA">${teams.map((t,i)=>`<option value="${i}">${teamColorName(i)}</option>`).join('')}</select>
+        <select id="selTeamB">${teams.map((t,i)=>`<option value="${i}" ${i===1?'selected':''}>${teamColorName(i)}</option>`).join('')}</select>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="startMatch()">Iniciar partida</button>
+    </div>`;
+  } else {
+    html += renderScoreboard(live);
+    html += renderMatchEditor(live, true);
+  }
+  const finalizadas = state.session.matches.filter(m=>m.finished);
+  if(finalizadas.length>0){
+    html += `<div class="eyebrow" style="margin-top:14px;">Partidas de hoje</div>`;
+    finalizadas.forEach(m=> html += renderMatchSummaryCard(m));
+  }
+  if(state.session.matches && state.session.matches.length>0){
+    html += `<div class="divider"></div><button class="btn btn-danger btn-block" onclick="zerarPartidas()">&#128465;&#65039; Zerar partidas</button>`;
+  }
+  return html;
+}
+function renderCampeonato(){
+  const ehCampeonato = state.session.modoJogo==='campeonato';
+  let html = `<div class="eyebrow">&#127942; Classificacao <small>campeonato atual</small></div><div class="card">`;
+  const classificacao = computeStandings();
+  if(state.session.teams.length===0){
+    html += `<div class="empty"><span class="icon">&#127942;</span><div class="msg">Sorteie os times na aba Sorteio primeiro.</div></div>`;
+  } else if(!ehCampeonato){
+    html += `<div class="empty"><span class="icon">&#9917;</span><div class="msg">O modo atual e "partida normal" — sem classificacao. Escolha "Novo Campeonato" na aba Partida quando quiser comecar um.</div></div>`;
+  } else {
+    html += renderStandingsTable(classificacao);
+    if(classificacao.every(t=>t.j===0)){
+      html += `<div class="meta" style="margin-top:8px;">Nenhuma partida encerrada ainda.</div>`;
+    }
+  }
+  html += `</div>`;
+  if(state.session.teams.length>0 && ehCampeonato){
+    html += `<button class="btn btn-outline btn-block" style="margin-bottom:14px;" onclick="abrirSimulacao()">&#128302; Simular proximas rodadas</button>`;
+  }
+  if(ehCampeonato){
+    const h2h = computeH2H();
+    html += `<div class="eyebrow">&#128290; Confronto direto</div><div class="card">`;
+    if(h2h.length===0){
+      html += `<div class="empty"><span class="icon">&#128290;</span><div class="msg">Nenhum confronto encerrado ainda.</div></div>`;
+    } else {
+      html += h2h.map(par=>{
+        return `<div style="padding:8px 0; border-top:1px solid var(--line);">
+          <div class="row between" style="margin-bottom:4px;">
+            <span class="badge" style="background:${teamColorHex(par.timeMenor)}; color:#fff;">${teamColorName(par.timeMenor)}</span>
+            <span class="meta">${par.jogos} jogo(s)</span>
+            <span class="badge" style="background:${teamColorHex(par.timeMaior)}; color:#fff;">${teamColorName(par.timeMaior)}</span>
+          </div>
+          <div class="row between">
+            <span class="name" style="font-size:14px;">${par.vMenor}V</span>
+            <span class="meta">${par.empates}E</span>
+            <span class="name" style="font-size:14px;">${par.vMaior}V</span>
+          </div>
+          <div class="meta" style="text-align:center; margin-top:2px;">Gols: ${par.golsMenor} x ${par.golsMaior}</div>
+        </div>`;
+      }).join('');
+    }
+    html += `</div>`;
+    const rodadasComJogos = agruparPorRodada(state.session.matches);
+    html += `<div class="eyebrow">&#11088; Destaques por rodada</div><div class="card">`;
+    if(rodadasComJogos.length===0){
+      html += `<div class="empty"><span class="icon">&#11088;</span><div class="msg">Ainda sem rodadas encerradas.</div></div>`;
+    } else {
+      html += rodadasComJogos.slice().reverse().map(r=>{
+        const destaque = destaqueDaRodada(r.jogos);
+        if(!destaque) return `<div class="row between" style="padding:6px 0; border-top:1px solid var(--line);"><span class="meta">${rodadaLabel(r.rodada)}</span><span class="meta">sem destaque</span></div>`;
+        const p = getPlayer(destaque.playerId);
+        if(!p) return '';
+        return `<div class="row between" style="padding:6px 0; border-top:1px solid var(--line);">
+          <span class="meta">${rodadaLabel(r.rodada)}</span>
+          <span class="name" style="font-size:13px;">${escapeHtml(p.name)} <span class="meta">(${destaque.gols}&#9917; ${destaque.assist}&#127919;)</span></span>
+        </div>`;
+      }).join('');
+    }
+    html += `</div>`;
+  }
+  html += `<div class="eyebrow">&#128220; Campeonatos encerrados</div>`;
+  const historico = state.historico || [];
+  if(historico.length===0){
+    html += `<div class="card"><div class="empty"><span class="icon">&#128220;</span><div class="msg">Nenhum campeonato arquivado ainda.</div></div></div>`;
+  } else {
+    historico.forEach(h=>{
+      html += `<div class="card">
+        <div class="name" style="font-size:16px;">${escapeHtml(h.nome)}</div>
+        <div class="meta" style="margin-bottom:8px;">${new Date(h.dataEncerramento+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}</div>
+        <div class="meta">&#127942; Campeao: <b style="color:var(--gold);">${escapeHtml(h.campeaoNome)}</b></div>
+        ${h.artilheiro ? `<div class="meta">&#9917; Artilheiro: ${escapeHtml(h.artilheiro.nome)} (${h.artilheiro.valor})</div>` : ''}
+        ${h.garcom ? `<div class="meta">&#127919; Garcom: ${escapeHtml(h.garcom.nome)} (${h.garcom.valor})</div>` : ''}
+      </div>`;
+    });
+  }
+  return html;
+}
+function rodadaLabel(num){
+  return (state.session.rodadaFinal && num===state.session.rodadaFinal) ? '🏆 Grande Final' : ('Rodada ' + num);
+}
+async function comecarGrandeFinal(){
+  if(getLiveMatch()){ alert('Encerre a partida ao vivo antes de avançar de rodada.'); return; }
+  const classificacao = computeStandings();
+  if(classificacao.length<2 || classificacao[0].j===0 || classificacao[1].j===0){
+    alert('Preciso de pelo menos 2 times com jogos encerrados na fase classificatória pra saber quem são o 1º e o 2º colocado.');
+    return;
+  }
+  const primeiro = classificacao[0], segundo = classificacao[1];
+  if(!confirm(`A Grande Final vai ser entre:\n\n🥇 ${primeiro.nome} (${primeiro.pts} pts)\n🥈 ${segundo.nome} (${segundo.pts} pts)\n\nConfirma?`)) return;
+  const novaRodada = (state.session.rodadaAtual || 1) + 1;
+  state.session.rodadaAtual = novaRodada;
+  state.session.rodadaFinal = novaRodada;
+  state.session.finalistas = { teamA: primeiro.idx, teamB: segundo.idx };
+  rodadaVisualizada = novaRodada;
+  await saveSession();
+  render();
+}
+async function corrigirNumeroRodada(){
+  const atual = state.session.rodadaAtual || 1;
+  const resposta = prompt('Corrigir o número da rodada atual.\n\nUse isso se o contador avançou errado (por exemplo, pulou rodadas que não aconteceram). Isso NÃO apaga nenhuma partida já jogada, só ajusta em qual rodada as novas partidas vão entrar a partir de agora.', atual);
+  if(resposta===null) return;
+  const novo = parseInt(resposta);
+  if(isNaN(novo) || novo<1){ alert('Digite um número válido (1 ou mais).'); return; }
+  state.session.rodadaAtual = novo;
+  rodadaVisualizada = novo;
+  await saveSession();
+  render();
+}
+
+function rodadaTemJogos(n){
+  return (state.session.matches||[]).some(m=>m.finished && (m.rodada||1)===n);
+}
+function renderPartida(){
+  const teams = state.session.teams;
+  let html = `<div class="eyebrow">Partida <small>📅 ${diaAtualLabel()}</small></div>`;
+  if(teams.length===0){
+    html += `<div class="empty"><span class="icon">🎲</span><div class="msg">Sorteie os times primeiro na aba Sorteio.</div></div>`;
+    return html;
+  }
+  if(!state.session.modoJogo){
+    html += `<div class="card">
+      <div class="meta" style="margin-bottom:12px; text-align:center;">Times sorteados! Como vai ser dessa vez?</div>
+      <button class="btn btn-primary btn-block" style="margin-bottom:10px;" onclick="escolherModo('campeonato')">&#127942; Novo Campeonato</button>
+      <div class="meta" style="text-align:center; margin-bottom:12px;">rodadas, classificacao e grande final</div>
+      <button class="btn btn-outline btn-block" onclick="escolherModo('normal')">&#9917; Partida normal</button>
+      <div class="meta" style="text-align:center; margin-top:6px;">sem rodadas nem classificacao</div>
+    </div>`;
+    return html;
+  }
+  if(state.session.modoJogo==='normal'){
+    return html + renderPartidaNormal();
+  }
+  const rodadaReal = state.session.rodadaAtual || 1;
+  const rv = getRodadaVisualizada();
+  const live = getLiveMatch();
+
+  let statusLabel;
+  if(rv===rodadaReal) statusLabel = 'rodada atual';
+  else if(rv<rodadaReal) statusLabel = rodadaTemJogos(rv) ? 'encerrada' : 'vazia (número pulado)';
+  else statusLabel = 'ainda não começou';
+
+  html += `<div class="card row between" style="padding:10px 12px;">
+    <button class="btn btn-ghost btn-sm" onclick="navegarRodada(-1)" ${rv<=1?'disabled':''}>◀</button>
+    <div style="text-align:center;">
+      <div class="name">${rodadaLabel(rv)}</div>
+      <div class="meta">${statusLabel}</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="navegarRodada(1)">▶</button>
+  </div>
+  <div class="meta" style="text-align:center; margin-bottom:10px; cursor:pointer; color:var(--green-light);" onclick="corrigirNumeroRodada()">⚙️ corrigir número da rodada</div>`;
+
+  if(rv < rodadaReal){
+    html += renderRodadaPassada(rv);
+    return html;
+  }
+  if(rv > rodadaReal){
+    html += `<div class="empty"><span class="icon">🗓️</span><div class="msg">${rodadaLabel(rv)} ainda não começou — será disputada em outro dia. Nada é salvo aqui até você começar ela de verdade.</div></div>`;
+    if(live){
+      html += `<div class="meta" style="text-align:center;">Encerre a partida ao vivo (na ${rodadaLabel(rodadaReal)}) antes de começar essa aqui.</div>`;
+    } else if(!state.session.rodadaFinal){
+      html += `<button class="btn btn-primary btn-block" style="margin-bottom:8px;" onclick="comecarRodada()">🏁 Começar rodada ${rodadaReal+1}</button>`;
+      html += `<button class="btn btn-outline btn-block" onclick="comecarGrandeFinal()">🏆 Encerrar fase classificatória e ir pra Grande Final</button>`;
+    } else {
+      html += `<div class="meta" style="text-align:center;">A Grande Final já foi definida — não dá pra criar rodadas depois dela.</div>`;
+    }
+    return html;
+  }
+
+  // rv === rodadaReal: rodada em andamento
+  if(live){
+    html += `<div class="meta" style="text-align:center; margin-bottom:10px;">Encerre a partida ao vivo antes de avançar de rodada.</div>`;
+  }
+
+  if(!live){
+    const finais = (state.session.rodadaFinal===rodadaReal) ? state.session.finalistas : null;
+    const teamASel = finais ? finais.teamA : 0;
+    const teamBSel = finais ? finais.teamB : 1;
+    html += `<div class="card">
+      <label class="lbl">${finais ? '🏆 Times da Grande Final (já selecionados pela classificação)' : 'Times da partida'}</label>
+      <div class="grid2" style="margin-bottom:10px;">
+        <select id="selTeamA">${teams.map((t,i)=>`<option value="${i}" ${i===teamASel?'selected':''}>${teamColorName(i)}</option>`).join('')}</select>
+        <select id="selTeamB">${teams.map((t,i)=>`<option value="${i}" ${i===teamBSel?'selected':''}>${teamColorName(i)}</option>`).join('')}</select>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="startMatch()">${finais ? '🏆 Iniciar a Grande Final' : 'Iniciar partida'}</button>
+    </div>`;
+  } else {
+    html += renderScoreboard(live);
+    html += renderMatchEditor(live, true);
+  }
+
+  const jogosDaRodada = state.session.matches.filter(m=>m.finished && (m.rodada||1)===rodadaReal);
+  if(jogosDaRodada.length>0){
+    html += `<div class="eyebrow" style="margin-top:14px;">Partidas encerradas ${state.session.rodadaFinal===rodadaReal ? 'na final' : 'nesta rodada'}</div>`;
+    html += renderDestaqueRodadaCard(jogosDaRodada);
+    jogosDaRodada.forEach(m=> html += renderMatchSummaryCard(m));
+    html += `<button class="btn btn-ghost btn-block btn-sm" onclick="compartilharRodada(${rodadaReal})">📤 Compartilhar rodada (imagem)</button>`;
+
+    if(state.session.rodadaFinal===rodadaReal){
+      const finalMatch = getFinalMatch();
+      const vencedor = finalMatch ? getVencedorFinal(finalMatch) : null;
+      if(finalMatch && vencedor!==null){
+        html += `<div class="card" style="text-align:center; background:linear-gradient(135deg, rgba(228,185,59,0.18), rgba(228,185,59,0.04)); border-color:rgba(228,185,59,0.4); margin-top:10px;">
+          <div class="name" style="font-size:17px;">🏆 Campeão: ${escapeHtml(teamColorName(vencedor))}</div>
+          <button class="btn btn-primary btn-block" style="margin-top:10px;" onclick="compartilharCampeao()">📤 Compartilhar mensagem de campeões</button>
+          <button class="btn btn-outline btn-block" style="margin-top:8px;" onclick="finalizarCampeonato()">🏁 Finalizar campeonato e arquivar</button>
+        </div>`;
+      }
+    }
+  }
+
+  if(state.session.matches && state.session.matches.length>0){
+    html += `<div class="divider"></div>
+      <button class="btn btn-danger btn-block" onclick="zerarPartidas()">🗑️ Zerar partidas</button>`;
+  }
+  return html;
+}
+function destaqueDaRodada(jogos){
+  const todosEventos = [].concat(...jogos.map(m=>m.events||[]));
+  return calcularDestaque(todosEventos);
+}
+function golsSofridosNaRodada(jogos){
+  const porGoleiro = {};
+  jogos.forEach(m=>{
+    const teamA = state.session.teams[m.teamA]; const teamB = state.session.teams[m.teamB];
+    const goleirosA = teamA ? teamA.players.map(getPlayer).filter(p=>p && p.position==='GOL') : [];
+    const goleirosB = teamB ? teamB.players.map(getPlayer).filter(p=>p && p.position==='GOL') : [];
+    goleirosA.forEach(p=>{ porGoleiro[p.id] = (porGoleiro[p.id]||0) + m.scoreB; });
+    goleirosB.forEach(p=>{ porGoleiro[p.id] = (porGoleiro[p.id]||0) + m.scoreA; });
+  });
+  return porGoleiro;
+}
+function melhorGoleiroDaRodada(jogos){
+  const porGoleiro = golsSofridosNaRodada(jogos);
+  let melhor = null;
+  Object.keys(porGoleiro).forEach(pid=>{
+    const sofridos = porGoleiro[pid];
+    if(!melhor || sofridos < melhor.sofridos) melhor = {playerId:pid, sofridos};
+  });
+  return melhor;
+}
+function renderDestaqueRodadaCard(jogos){
+  const destaque = destaqueDaRodada(jogos);
+  const melhorGoleiro = melhorGoleiroDaRodada(jogos);
+  let html = '';
+  if(destaque){
+    const p = getPlayer(destaque.playerId);
+    if(p){
+      html += `<div class="card" style="text-align:center; background:linear-gradient(135deg, rgba(228,185,59,0.15), rgba(228,185,59,0.03)); border-color:rgba(228,185,59,0.35);">
+        <div class="meta" style="margin-bottom:2px;">⭐ Destaque da rodada</div>
+        <div class="name" style="font-size:16px;">${escapeHtml(p.name)}</div>
+        <div class="meta">${destaque.gols}⚽  ${destaque.assist}🎯</div>
+      </div>`;
+    }
+  }
+  if(melhorGoleiro){
+    const p = getPlayer(melhorGoleiro.playerId);
+    if(p){
+      html += `<div class="card" style="text-align:center; background:linear-gradient(135deg, rgba(61,143,179,0.15), rgba(61,143,179,0.03)); border-color:rgba(61,143,179,0.35);">
+        <div class="meta" style="margin-bottom:2px;">🧤 Goleiro da rodada <small>menos gols sofridos</small></div>
+        <div class="name" style="font-size:16px;">${escapeHtml(p.name)}</div>
+        <div class="meta">${melhorGoleiro.sofridos} gol(s) sofrido(s) na rodada</div>
+      </div>`;
+    }
+  }
+  return html;
+}
+function renderRodadaPassada(rv){
+  const rodadas = agruparPorRodada(state.session.matches);
+  const info = rodadas.find(r=>r.rodada===rv);
+  let html = '';
+  if(!info || info.jogos.length===0){
+    html += `<div class="empty"><span class="icon">📅</span><div class="msg">Nenhuma partida registrada nessa rodada.<br>Se esse número foi pulado sem querer, use "⚙️ corrigir número da rodada" ali em cima.</div></div>`;
+    return html;
+  }
+  const dataFmt = new Date(info.date+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  html += `<div class="meta" style="text-align:center; margin-bottom:10px;">Disputada em ${dataFmt}</div>`;
+  html += renderDestaqueRodadaCard(info.jogos);
+  info.jogos.forEach(m=> html += renderMatchSummaryCard(m));
+  html += `<button class="btn btn-ghost btn-block btn-sm" onclick="compartilharRodada(${rv})">📤 Compartilhar rodada (imagem)</button>`;
+  return html;
+}
+function precisaDePenaltis(m){
+  return m.finished && m.scoreA===m.scoreB && state.session.rodadaFinal && (m.rodada||1)===state.session.rodadaFinal && !m.penaltis;
+}
+function getVencedorFinal(m){
+  if(m.scoreA !== m.scoreB) return m.scoreA > m.scoreB ? m.teamA : m.teamB;
+  if(m.penaltis) return m.penaltis.scoreA > m.penaltis.scoreB ? m.teamA : m.teamB;
+  return null;
+}
+function abrirPenaltis(matchId){
+  const m = getMatchById(matchId); if(!m) return;
+  document.getElementById('penAction_'+matchId).innerHTML = `<div class="card" style="margin-top:8px;">
+    <label class="lbl">Placar da disputa de pênaltis</label>
+    <div class="grid2" style="margin-bottom:10px;">
+      <input type="number" id="penA_${matchId}" placeholder="${teamColorName(m.teamA)}" min="0">
+      <input type="number" id="penB_${matchId}" placeholder="${teamColorName(m.teamB)}" min="0">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="confirmarPenaltis('${matchId}')">Confirmar pênaltis</button>
+  </div>`;
+}
+async function confirmarPenaltis(matchId){
+  const m = getMatchById(matchId); if(!m) return;
+  const a = parseInt(document.getElementById('penA_'+matchId).value);
+  const b = parseInt(document.getElementById('penB_'+matchId).value);
+  if(isNaN(a) || isNaN(b) || a===b){ alert('Digite um placar de pênaltis válido, sem empate.'); return; }
+  m.penaltis = { scoreA:a, scoreB:b };
+  document.getElementById('penAction_'+matchId).innerHTML = '';
+  await saveSession();
+  render();
+}
+function renderMatchSummaryCard(m){
+  const editing = editandoPartidaId===m.id;
+  const destaque = calcularDestaque(m.events);
+  let html = `<div class="card">
+    <div class="row between" style="margin-bottom:4px;">
+      <span class="badge" style="background:${teamColorHex(m.teamA)}; color:#fff;">${teamColorName(m.teamA)}</span>
+      <span style="font-family:'Rajdhani'; font-weight:700; font-size:18px;">${m.scoreA} × ${m.scoreB}</span>
+      <span class="badge" style="background:${teamColorHex(m.teamB)}; color:#fff;">${teamColorName(m.teamB)}</span>
+    </div>
+    ${destaque ? `<div class="meta" style="text-align:center; ${editing?'margin-bottom:8px;':''}">${destaqueLabel(destaque)}</div>` : ''}`;
+  if(precisaDePenaltis(m)){
+    html += `<div class="meta" style="text-align:center; color:var(--gold); margin:8px 0;">⚠️ Empate na Grande Final — precisa de pênaltis pra decidir o campeão.</div>
+      <div id="penAction_${m.id}"></div>
+      <button class="btn btn-primary btn-block btn-sm" onclick="abrirPenaltis('${m.id}')">🥅 Registrar disputa de pênaltis</button>`;
+  }
+  if(m.penaltis){
+    const vencPen = getVencedorFinal(m);
+    html += `<div class="meta" style="text-align:center; margin:6px 0;">Pênaltis: ${m.penaltis.scoreA} × ${m.penaltis.scoreB}${vencPen!==null?` — ${escapeHtml(teamColorName(vencPen))} venceu`:''}</div>`;
+  }
+  if(!editing){
+    html += `<div class="row" style="gap:8px; margin-top:8px;">
+      <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="editandoPartidaId='${m.id}'; render();">✏️ Editar esta partida</button>
+      <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="compartilharPartida('${m.id}')">📤 Compartilhar</button>
+    </div>`;
+  } else {
+    html += renderMatchEditor(m, false);
+    html += `<button class="btn btn-outline btn-block btn-sm" style="margin-top:8px;" onclick="editandoPartidaId=null; render();">Fechar edição</button>`;
+  }
+  html += `</div>`;
+  return html;
+}
+function formatTimer(seconds){
+  const mm = Math.floor(seconds/60), ss = seconds%60;
+  return String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+}
+function currentTimerSeconds(m){
+  let secs = m.timerSeconds||0;
+  if(m.timerRunning && m.timerStartedAt) secs += Math.floor((Date.now()-m.timerStartedAt)/1000);
+  return secs;
+}
+async function toggleTimer(matchId){
+  const m = getMatchById(matchId); if(!m) return;
+  if(m.timerRunning){
+    m.timerSeconds = currentTimerSeconds(m);
+    m.timerRunning = false;
+    m.timerStartedAt = null;
+  } else {
+    m.timerRunning = true;
+    m.timerStartedAt = Date.now();
+  }
+  await saveSession();
+  render();
+}
+async function resetTimer(matchId){
+  const m = getMatchById(matchId); if(!m) return;
+  if(!confirm('Zerar o cronômetro dessa partida?')) return;
+  m.timerSeconds = 0;
+  m.timerRunning = false;
+  m.timerStartedAt = null;
+  await saveSession();
+  render();
+}
+setInterval(()=>{
+  const m = getLiveMatch ? getLiveMatch() : null;
+  if(m && m.timerRunning){
+    const el = document.getElementById('timerDisplay_'+m.id);
+    if(el) el.textContent = formatTimer(currentTimerSeconds(m));
+  }
+}, 1000);
+function renderScoreboard(m){
+  const avgA = avgLevel(m.teamA), avgB = avgLevel(m.teamB);
+  return `<div class="scoreboard"><div class="sb-teams">
+      <div class="sb-team"><div class="tname">${teamColorName(m.teamA)}</div><div class="sb-score">${m.scoreA}</div><div class="ovr">nível ${avgA}</div></div>
+      <div class="sb-x">×</div>
+      <div class="sb-team"><div class="tname">${teamColorName(m.teamB)}</div><div class="sb-score">${m.scoreB}</div><div class="ovr">nível ${avgB}</div></div>
+    </div>
+    <div class="row" style="justify-content:center; align-items:center; gap:12px; margin-top:14px;">
+      <span id="timerDisplay_${m.id}" style="font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700; color:var(--gold); letter-spacing:1px;">${formatTimer(currentTimerSeconds(m))}</span>
+      <button class="btn btn-sm ${m.timerRunning?'btn-danger':'btn-primary'}" onclick="toggleTimer('${m.id}')">${m.timerRunning?'⏸ Pausar':'▶️ Iniciar'}</button>
+      <button class="btn btn-outline btn-sm" onclick="resetTimer('${m.id}')">🔄</button>
+    </div>
+  </div>`;
+}
+function renderMatchEditor(m, isLive){
+  let html = `<div class="grid2" style="margin-bottom:8px;">
+      <button class="btn btn-outline" onclick="openGoal('${m.id}','A')">⚽ Gol ${teamColorName(m.teamA)}</button>
+      <button class="btn btn-outline" onclick="openGoal('${m.id}','B')">⚽ Gol ${teamColorName(m.teamB)}</button>
+    </div>
+    <div class="grid2" style="margin-bottom:8px;">
+      <button class="btn btn-outline" onclick="openAssist('${m.id}','A')">🎯 Assistência ${teamColorName(m.teamA)}</button>
+      <button class="btn btn-outline" onclick="openAssist('${m.id}','B')">🎯 Assistência ${teamColorName(m.teamB)}</button>
+    </div>
+    <div class="grid2" style="margin-bottom:10px;">
+      <button class="btn btn-outline" onclick="openCard('${m.id}','A')">🟨🟦🟥 Cartão ${teamColorName(m.teamA)}</button>
+      <button class="btn btn-outline" onclick="openCard('${m.id}','B')">🟨🟦🟥 Cartão ${teamColorName(m.teamB)}</button>
+    </div>
+    <button class="btn btn-outline btn-block" style="margin-bottom:10px;" onclick="openOwnGoal('${m.id}')">🥅 Gol contra</button>
+    <div id="matchAction_${m.id}"></div>
+    <div class="card">
+      <div class="meta" style="margin-bottom:6px;">Eventos da partida <small>toque em ✏️ ou 🗑️ pra corrigir</small></div>
+      ${m.events.length===0 ? '<div class="meta">Nenhum evento ainda.</div>' :
+        m.events.map((ev,idx)=>({ev,idx})).slice().reverse().map(({ev,idx})=>renderEventRowEditable(m.id,ev,idx)).join('')}
+    </div>
+    <button class="btn btn-primary btn-block" onclick="compartilharPartida('${m.id}')" style="margin-bottom:8px;">📤 Compartilhar placar (imagem)</button>`;
+  if(isLive){
+    html += `<button class="btn btn-danger btn-block" onclick="finishMatch()">Encerrar partida</button>`;
+  }
+  return html;
+}
+function computeCampeonatoStats(){
+  const gols = {}, assist = {};
+  (state.session.matches||[]).forEach(m=>{
+    (m.events||[]).forEach(ev=>{
+      if(ev.type==='goal') gols[ev.playerId] = (gols[ev.playerId]||0)+1;
+      if(ev.type==='assist') assist[ev.playerId] = (assist[ev.playerId]||0)+1;
+    });
+  });
+  function melhor(obj){
+    let bestId=null, bestVal=0;
+    Object.keys(obj).forEach(id=>{ if(obj[id]>bestVal){ bestVal=obj[id]; bestId=id; } });
+    if(!bestId) return null;
+    const p = getPlayer(bestId);
+    return p ? {nome:p.name, valor:bestVal} : null;
+  }
+  return { artilheiro: melhor(gols), garcom: melhor(assist) };
+}
+function getFinalMatch(){
+  if(!state.session.rodadaFinal) return null;
+  return state.session.matches.find(m=>m.finished && (m.rodada||1)===state.session.rodadaFinal) || null;
+}
+function gerarImagemCampeao(){
+  const finalMatch = getFinalMatch();
+  if(!finalMatch) return null;
+  const campeaoIdx = getVencedorFinal(finalMatch);
+  if(campeaoIdx===null) return null;
+  const jogadores = (state.session.teams[campeaoIdx]?.players||[]).map(getPlayer).filter(Boolean);
+
+  const W = 720;
+  const headerH = 220;
+  const rowH = 34;
+  const footerH = 46;
+  const H = headerH + Math.max(jogadores.length,1)*rowH + footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createRadialGradient(W/2, 0, 40, W/2, H/2, W);
+  grad.addColorStop(0, '#2b230a');
+  grad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 26px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 44);
+
+  ctx.fillStyle = '#E4B93B';
+  ctx.font = 'bold 42px Arial, sans-serif';
+  ctx.fillText('🏆 CAMPEÃO 🏆', W/2, 100);
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 32px Arial, sans-serif';
+  ctx.fillText(teamColorName(campeaoIdx), W/2, 145);
+
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '16px Arial, sans-serif';
+  const placarTxt = finalMatch.penaltis
+    ? `${finalMatch.scoreA} × ${finalMatch.scoreB} (pênaltis: ${finalMatch.penaltis.scoreA} × ${finalMatch.penaltis.scoreB})`
+    : `${finalMatch.scoreA} × ${finalMatch.scoreB}`;
+  ctx.fillText(`Grande Final: ${placarTxt}`, W/2, 172);
+  ctx.fillText('Parabéns aos campeões!', W/2, 196);
+
+  let y = headerH;
+  jogadores.forEach((p,i)=>{
+    if(i%2===0){ ctx.fillStyle='rgba(255,255,255,0.04)'; ctx.fillRect(24,y,W-48,rowH); }
+    ctx.fillStyle = '#F5F6F7';
+    ctx.font = '17px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText((p.position==='GOL'?'🧤 ':'⭐ ') + p.name, 42, y+24);
+    y += rowH;
+  });
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharCampeao(){
+  const canvas = gerarImagemCampeao();
+  if(!canvas){ alert('A Grande Final ainda não foi decidida — encerre a partida (e os pênaltis, se precisar) primeiro.'); return; }
+  await compartilharImagemGenerica(canvas, 'campeao.png', 'Campeão do campeonato');
+}
+async function finalizarCampeonato(){
+  const finalMatch = getFinalMatch();
+  if(!finalMatch){ alert('A Grande Final ainda não foi encerrada.'); return; }
+  const campeaoIdx = getVencedorFinal(finalMatch);
+  if(campeaoIdx===null){ alert('A Grande Final terminou empatada — registre a disputa de pênaltis antes de finalizar.'); return; }
+
+  const nomeCampeonato = prompt('Nome pra guardar esse campeonato no histórico:', 'Campeonato ' + new Date().getFullYear());
+  if(nomeCampeonato===null) return;
+  if(!confirm(`Isso vai arquivar times, partidas e classificação desse campeonato, e zerar times/rodadas pra você seguir com as peladas semanais normais. As estatísticas dos jogadores continuam como estão. Campeão: ${teamColorName(campeaoIdx)}. Continuar?`)) return;
+
+  const stats = computeCampeonatoStats();
+  const arquivo = {
+    id: uid(),
+    nome: (nomeCampeonato.trim() || ('Campeonato ' + todayKey())),
+    dataEncerramento: todayKey(),
+    campeaoNome: teamColorName(campeaoIdx),
+    classificacaoFinal: computeStandings(),
+    times: state.session.teams.map((t,i)=>({ nome: teamColorName(i), jogadores: t.players.map(pid=>getPlayer(pid)?.name || '?') })),
+    matches: state.session.matches,
+    artilheiro: stats.artilheiro,
+    garcom: stats.garcom
+  };
+  state.historico = state.historico || [];
+  state.historico.unshift(arquivo);
+  await saveHistorico();
+
+  state.session.teams = [];
+  state.session.matches = [];
+  state.session.grupos3 = [];
+  state.session.rodadaAtual = 1;
+  state.session.rodadaFinal = null;
+  state.session.finalistas = null;
+  rodadaVisualizada = 1;
+  await saveSession();
+
+  render();
+  alert('Campeonato arquivado! Sorteie novos times quando quiser começar as peladas semanais normais de novo.');
+}
+async function zerarPartidas(){
+  if(!confirm('Isso vai apagar TODO o histórico de partidas (todas as rodadas, incluindo a partida ao vivo se houver) e zerar a tabela de classificação. Os times sorteados continuam salvos.\n\nAtenção: os gols, assistências, cartões e vitórias já contabilizados na aba Ranking NÃO são desfeitos automaticamente por essa ação. Se quiser zerar isso também, use o botão "Zerar ranking" na aba Ranking.\n\nContinuar?')) return;
+  state.session.matches = [];
+  state.session.rodadaAtual = 1;
+  rodadaVisualizada = 1;
+  await saveSession();
+  render();
+}
+function agruparPorRodada(matches){
+  const finalizadas = (matches || []).filter(m=>m.finished);
+  if(finalizadas.some(m=>m.rodada)){
+    const numeros = [...new Set(finalizadas.map(m=>m.rodada||1))].sort((a,b)=>a-b);
+    return numeros.map(num=>{
+      const jogos = finalizadas.filter(m=>(m.rodada||1)===num);
+      return { rodada:num, date: jogos[jogos.length-1].date, jogos };
+    });
+  }
+  // compatibilidade: partidas antigas sem número de rodada, agrupa por data
+  const datasUnicas = [...new Set(finalizadas.map(m=>m.date))].sort();
+  return datasUnicas.map((date,i)=>({
+    rodada: i+1,
+    date,
+    jogos: finalizadas.filter(m=>m.date===date)
+  }));
+}
+function avgLevel(teamIdx){
+  const team = state.session.teams[teamIdx]; if(!team || team.players.length===0) return 0;
+  return Math.round(team.players.reduce((s,pid)=>s+(getPlayer(pid)?.level||0),0)/team.players.length);
+}
+function renderEventRow(ev){
+  const [icon,label] = eventLabel(ev);
+  return `<div class="evrow"><span>${icon}</span><span>${label}</span></div>`;
+}
+function renderEventRowEditable(matchId, ev, idx){
+  const [icon,label] = eventLabel(ev);
+  const canEdit = ev.type==='goal' || ev.type==='owngoal';
+  return `<div class="evrow" style="justify-content:space-between;">
+    <span>${icon} ${label}</span>
+    <span style="display:flex; gap:4px; flex-shrink:0;">
+      ${canEdit ? `<button class="btn btn-ghost btn-sm" style="padding:3px 8px; font-size:11px;" onclick="abrirEdicaoGol('${matchId}',${idx})">✏️</button>` : ''}
+      <button class="btn btn-danger btn-sm" style="padding:3px 8px; font-size:11px;" onclick="excluirEvento('${matchId}',${idx})">🗑️</button>
+    </span>
+  </div>`;
+}
+function getMatchById(matchId){ return state.session.matches.find(m=>m.id===matchId); }
+function calcularDestaque(events){
+  const pontos = {};
+  (events||[]).forEach(ev=>{
+    if(ev.type==='goal'){ pontos[ev.playerId] = pontos[ev.playerId] || {gols:0, assist:0}; pontos[ev.playerId].gols++; }
+    if(ev.type==='assist'){ pontos[ev.playerId] = pontos[ev.playerId] || {gols:0, assist:0}; pontos[ev.playerId].assist++; }
+  });
+  let melhor = null;
+  Object.keys(pontos).forEach(pid=>{
+    const s = pontos[pid];
+    const score = s.gols*2 + s.assist;
+    if(score<=0) return;
+    if(!melhor || score>melhor.score || (score===melhor.score && s.gols>melhor.gols)){
+      melhor = {playerId:pid, gols:s.gols, assist:s.assist, score};
+    }
+  });
+  return melhor;
+}
+function destaqueLabel(destaque){
+  if(!destaque) return '';
+  const p = getPlayer(destaque.playerId);
+  if(!p) return '';
+  const partes = [];
+  if(destaque.gols>0) partes.push(`${destaque.gols}⚽`);
+  if(destaque.assist>0) partes.push(`${destaque.assist}🎯`);
+  return `⭐ Destaque: ${escapeHtml(p.name)} (${partes.join(' ')})`;
+}
+function eventLabel(ev){
+  const p = getPlayer(ev.playerId); const name = p ? p.name : '—';
+  const map = {goal:['⚽',`Gol de ${name}`], owngoal:['🥅',`Gol contra de ${name}`], assist:['🎯',`Assistência de ${name}`], yellow:['🟨',`Cartão amarelo — ${name}`], blue:['🟦',`Cartão azul — ${name}`], red:['🟥',`Cartão vermelho — ${name}`]};
+  return map[ev.type] || ['•', name];
+}
+function gerarImagemPartida(matchId){
+  const m = getMatchById(matchId); if(!m) return null;
+  const events = m.events;
+  const destaque = calcularDestaque(events);
+  const W = 720;
+  const headerH = 110;
+  const scoreboardH = 190;
+  const destaqueH = destaque ? 36 : 0;
+  const rowH = 34;
+  const eventsHeaderH = 40;
+  const footerH = 46;
+  const eventsAreaH = events.length>0 ? eventsHeaderH + events.length*rowH : 60;
+  const H = headerH + scoreboardH + destaqueH + eventsAreaH + footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const bgGrad = ctx.createLinearGradient(0,0,0,H);
+  bgGrad.addColorStop(0, '#12171c');
+  bgGrad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 28px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 46);
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '15px Arial, sans-serif';
+  ctx.fillText(todayLabel() + (m.finished ? ' — partida encerrada' : ' — ao vivo'), W/2, 74);
+
+  // placar
+  const sbY = headerH, sbH = scoreboardH;
+  const sbGrad = ctx.createRadialGradient(W/2, sbY, 40, W/2, sbY+sbH/2, W/1.3);
+  sbGrad.addColorStop(0, '#1b3a20');
+  sbGrad.addColorStop(1, '#0d1610');
+  ctx.fillStyle = sbGrad;
+  roundRect(ctx, 24, sbY, W-48, sbH, 16);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(76,175,80,0.35)';
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, 24, sbY, W-48, sbH, 16);
+  ctx.stroke();
+
+  const midY = sbY + sbH/2;
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 20px Arial, sans-serif';
+  ctx.fillText(teamColorName(m.teamA), W*0.27, midY-30);
+  ctx.fillText(teamColorName(m.teamB), W*0.73, midY-30);
+
+  ctx.fillStyle = '#E4B93B';
+  ctx.font = 'bold 64px Arial, sans-serif';
+  ctx.fillText(String(m.scoreA), W*0.27, midY+45);
+  ctx.fillText(String(m.scoreB), W*0.73, midY+45);
+
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = 'bold 26px Arial, sans-serif';
+  ctx.fillText('×', W/2, midY+18);
+
+  // destaque da partida
+  if(destaque){
+    const p = getPlayer(destaque.playerId);
+    if(p){
+      ctx.fillStyle = '#E4B93B';
+      ctx.font = 'bold 17px Arial, sans-serif';
+      ctx.textAlign = 'center';
+      const partes = [];
+      if(destaque.gols>0) partes.push(`${destaque.gols}⚽`);
+      if(destaque.assist>0) partes.push(`${destaque.assist}🎯`);
+      ctx.fillText(`⭐ Destaque: ${p.name} (${partes.join(' ')})`, W/2, headerH+scoreboardH+26);
+    }
+  }
+
+  // eventos
+  let y = headerH + scoreboardH + destaqueH + 20;
+  ctx.textAlign = 'left';
+  if(events.length===0){
+    ctx.fillStyle = '#565B63';
+    ctx.font = 'italic 16px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Nenhum evento registrado', W/2, y+18);
+  } else {
+    ctx.fillStyle = '#E4B93B';
+    ctx.font = 'bold 18px Arial, sans-serif';
+    ctx.fillText('Eventos da partida', 30, y+16);
+    y += eventsHeaderH;
+    events.forEach((ev,i)=>{
+      if(i%2===0){ ctx.fillStyle='rgba(255,255,255,0.03)'; ctx.fillRect(24,y,W-48,rowH); }
+      const [icon,label] = eventLabel(ev);
+      ctx.fillStyle = '#F5F6F7';
+      ctx.font = '16px Arial, sans-serif';
+      ctx.fillText(`${icon}  ${label}`, 42, y+24);
+      ctx.fillStyle = '#8A8F98';
+      ctx.font = '13px Arial, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(ev.side==='A' ? teamColorName(m.teamA) : teamColorName(m.teamB), W-42, y+24);
+      ctx.textAlign = 'left';
+      y += rowH;
+    });
+  }
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharPartida(matchId){
+  const canvas = gerarImagemPartida(matchId);
+  if(!canvas){ alert('Não encontrei essa partida.'); return; }
+  await compartilharImagemGenerica(canvas, 'partida.png', 'Resultado da partida');
+}
+function gerarImagemRodada(rodadaInfo){
+  const jogos = rodadaInfo.jogos;
+  const destaque = destaqueDaRodada(jogos);
+  const W = 720;
+  const headerH = 150;
+  const destaqueH = destaque ? 46 : 0;
+  const rowH = 56;
+  const footerH = 46;
+  const H = headerH + destaqueH + Math.max(jogos.length,1)*rowH + footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, '#12171c');
+  grad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 30px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 50);
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 22px Arial, sans-serif';
+  ctx.fillText(rodadaLabel(rodadaInfo.rodada), W/2, 82);
+
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '15px Arial, sans-serif';
+  const dataFmt = new Date(rodadaInfo.date+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  ctx.fillText(dataFmt, W/2, 108);
+
+  let y = headerH;
+  if(destaque){
+    const p = getPlayer(destaque.playerId);
+    if(p){
+      ctx.fillStyle = '#E4B93B';
+      ctx.font = 'bold 18px Arial, sans-serif';
+      ctx.textAlign = 'center';
+      const partes = [];
+      if(destaque.gols>0) partes.push(`${destaque.gols}⚽`);
+      if(destaque.assist>0) partes.push(`${destaque.assist}🎯`);
+      ctx.fillText(`⭐ Destaque da rodada: ${p.name} (${partes.join(' ')})`, W/2, y+28);
+    }
+    y += destaqueH;
+  }
+  jogos.forEach((m,i)=>{
+    if(i%2===0){ ctx.fillStyle='rgba(255,255,255,0.03)'; ctx.fillRect(24,y,W-48,rowH); }
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#F5F6F7';
+    ctx.font = 'bold 18px Arial, sans-serif';
+    ctx.fillText(teamColorName(m.teamA), 40, y+34);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#E4B93B';
+    ctx.font = 'bold 24px Arial, sans-serif';
+    ctx.fillText(`${m.scoreA} × ${m.scoreB}`, W/2, y+36);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#F5F6F7';
+    ctx.font = 'bold 18px Arial, sans-serif';
+    ctx.fillText(teamColorName(m.teamB), W-40, y+34);
+    y += rowH;
+  });
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharRodada(rodadaNum){
+  const rodadas = agruparPorRodada(state.session.matches);
+  const r = rodadas.find(x=>x.rodada===rodadaNum);
+  if(!r){ alert('Não encontrei essa rodada.'); return; }
+  await compartilharImagemGenerica(gerarImagemRodada(r), `rodada-${rodadaNum}.png`, rodadaLabel(rodadaNum));
+}
+async function startMatch(){
+  const a = parseInt(document.getElementById('selTeamA').value);
+  const b = parseInt(document.getElementById('selTeamB').value);
+  if(a===b){ alert('Escolha dois times diferentes.'); return; }
+  state.session.matches.push({id:uid(), date:todayKey(), dia:state.session.diaPelada, rodada:state.session.rodadaAtual||1, teamA:a, teamB:b, scoreA:0, scoreB:0, events:[], finished:false, cardCounts:{}});
+  await saveSession(); render();
+}
+function getLiveMatch(){ return state.session.matches.find(m=>!m.finished); }
+function actionDiv(matchId){ return document.getElementById('matchAction_'+matchId); }
+function openGoal(matchId, side){
+  const m = getMatchById(matchId); if(!m) return;
+  const teamIdx = side==='A'?m.teamA:m.teamB;
+  const players = state.session.teams[teamIdx].players.map(getPlayer).filter(Boolean);
+  actionDiv(matchId).innerHTML = `<div class="card">
+    <label class="lbl">Quem marcou o gol? (${teamColorName(teamIdx)})</label>
+    <select id="scorerSel_${matchId}">${players.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}</select>
+    <label class="lbl" style="margin-top:10px;">Assistência (opcional)</label>
+    <select id="assistSel_${matchId}"><option value="">Sem assistência</option>${players.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}</select>
+    <div class="row" style="margin-top:12px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="confirmGoal('${matchId}','${side}')">Confirmar gol</button>
+      <button class="btn btn-outline" onclick="actionDiv('${matchId}').innerHTML=''">Cancelar</button>
+    </div></div>`;
+}
+async function confirmGoal(matchId, side){
+  const m = getMatchById(matchId); if(!m) return;
+  const scorerId = document.getElementById('scorerSel_'+matchId).value;
+  const assistId = document.getElementById('assistSel_'+matchId).value;
+  if(side==='A') m.scoreA++; else m.scoreB++;
+  m.events.push({type:'goal', playerId:scorerId, side});
+  const scorer = getPlayer(scorerId); if(scorer) scorer.goals=(scorer.goals||0)+1;
+  if(assistId){ m.events.push({type:'assist', playerId:assistId, side}); const a=getPlayer(assistId); if(a) a.assists=(a.assists||0)+1; }
+  actionDiv(matchId).innerHTML='';
+  await saveSession(); await savePlayers(); render();
+}
+function openAssist(matchId, side){
+  const m = getMatchById(matchId); if(!m) return;
+  const teamIdx = side==='A'?m.teamA:m.teamB;
+  const players = state.session.teams[teamIdx].players.map(getPlayer).filter(Boolean);
+  actionDiv(matchId).innerHTML = `<div class="card">
+    <label class="lbl">Quem deu a assistência? (${teamColorName(teamIdx)})</label>
+    <select id="assistOnlySel_${matchId}">${players.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}</select>
+    <div class="row" style="margin-top:12px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="confirmAssistOnly('${matchId}','${side}')">Confirmar assistência</button>
+      <button class="btn btn-outline" onclick="actionDiv('${matchId}').innerHTML=''">Cancelar</button>
+    </div></div>`;
+}
+async function confirmAssistOnly(matchId, side){
+  const m = getMatchById(matchId); if(!m) return;
+  const playerId = document.getElementById('assistOnlySel_'+matchId).value;
+  m.events.push({type:'assist', playerId, side});
+  const a = getPlayer(playerId); if(a) a.assists=(a.assists||0)+1;
+  actionDiv(matchId).innerHTML='';
+  await saveSession(); await savePlayers(); render();
+}
+function openOwnGoal(matchId){
+  const m = getMatchById(matchId); if(!m) return;
+  actionDiv(matchId).innerHTML = `<div class="card">
+    <label class="lbl">Gol contra — de qual time é o jogador que marcou contra?</label>
+    <div class="segrow">
+      <div class="seg on" id="ogTeamA_${matchId}" onclick="pickOwnGoalTeam('${matchId}','A')">${teamColorName(m.teamA)}</div>
+      <div class="seg" id="ogTeamB_${matchId}" onclick="pickOwnGoalTeam('${matchId}','B')">${teamColorName(m.teamB)}</div>
+    </div>
+    <div class="meta" style="margin-bottom:8px;">O gol vai contar pro time adversário — escolha o jogador que desviou contra o próprio gol.</div>
+    <select id="ogPlayerSel_${matchId}"></select>
+    <div class="row" style="margin-top:12px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="confirmOwnGoal('${matchId}')">Confirmar gol contra</button>
+      <button class="btn btn-outline" onclick="actionDiv('${matchId}').innerHTML=''">Cancelar</button>
+    </div></div>`;
+  pickOwnGoalTeam(matchId, 'A');
+}
+let ownGoalSide = 'A';
+function pickOwnGoalTeam(matchId, side){
+  const m = getMatchById(matchId); if(!m) return;
+  ownGoalSide = side;
+  document.getElementById('ogTeamA_'+matchId).classList.toggle('on', side==='A');
+  document.getElementById('ogTeamB_'+matchId).classList.toggle('on', side==='B');
+  const teamIdx = side==='A' ? m.teamA : m.teamB;
+  const players = state.session.teams[teamIdx].players.map(getPlayer).filter(Boolean);
+  document.getElementById('ogPlayerSel_'+matchId).innerHTML = players.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+}
+async function confirmOwnGoal(matchId){
+  const m = getMatchById(matchId); if(!m) return;
+  const playerId = document.getElementById('ogPlayerSel_'+matchId).value;
+  const beneficiado = ownGoalSide==='A' ? 'B' : 'A'; // time do jogador marca contra si, o outro time ganha o gol
+  if(beneficiado==='A') m.scoreA++; else m.scoreB++;
+  m.events.push({type:'owngoal', playerId, side:beneficiado});
+  actionDiv(matchId).innerHTML='';
+  await saveSession(); render();
+}
+function abrirEdicaoGol(matchId, eventIndex){
+  const m = getMatchById(matchId); if(!m) return;
+  const ev = m.events[eventIndex]; if(!ev) return;
+  const isOwn = ev.type==='owngoal';
+  const teamIdx = ev.side==='A' ? m.teamA : m.teamB;
+  const teamParaSelecionar = isOwn ? (ev.side==='A' ? m.teamB : m.teamA) : teamIdx;
+  const players = state.session.teams[teamParaSelecionar].players.map(getPlayer).filter(Boolean);
+  actionDiv(matchId).innerHTML = `<div class="card">
+    <label class="lbl">Corrigir autor do ${isOwn?'gol contra':'gol'}</label>
+    <select id="editGolSel_${matchId}">${players.map(p=>`<option value="${p.id}" ${p.id===ev.playerId?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}</select>
+    <div class="row" style="margin-top:12px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="confirmarEdicaoGol('${matchId}',${eventIndex})">Salvar correção</button>
+      <button class="btn btn-outline" onclick="actionDiv('${matchId}').innerHTML=''">Cancelar</button>
+    </div></div>`;
+}
+async function confirmarEdicaoGol(matchId, eventIndex){
+  const m = getMatchById(matchId); if(!m) return;
+  const ev = m.events[eventIndex]; if(!ev) return;
+  const novoId = document.getElementById('editGolSel_'+matchId).value;
+  if(novoId !== ev.playerId){
+    if(ev.type==='goal'){
+      const antigo = getPlayer(ev.playerId); if(antigo) antigo.goals = Math.max(0,(antigo.goals||0)-1);
+      const novo = getPlayer(novoId); if(novo) novo.goals = (novo.goals||0)+1;
+    }
+    ev.playerId = novoId;
+    await savePlayers();
+  }
+  actionDiv(matchId).innerHTML = '';
+  await saveSession(); render();
+}
+async function excluirEvento(matchId, eventIndex){
+  const m = getMatchById(matchId); if(!m) return;
+  const ev = m.events[eventIndex]; if(!ev) return;
+  if(!confirm('Excluir esse evento? Isso desfaz o efeito dele no placar/estatísticas.')) return;
+  if(ev.type==='goal' || ev.type==='owngoal'){
+    if(ev.side==='A') m.scoreA = Math.max(0, m.scoreA-1); else m.scoreB = Math.max(0, m.scoreB-1);
+    if(ev.type==='goal'){ const p=getPlayer(ev.playerId); if(p) p.goals=Math.max(0,(p.goals||0)-1); }
+  } else if(ev.type==='assist'){
+    const p=getPlayer(ev.playerId); if(p) p.assists=Math.max(0,(p.assists||0)-1);
+  } else if(ev.type==='yellow'){
+    const p=getPlayer(ev.playerId); if(p) p.yellow=Math.max(0,(p.yellow||0)-1);
+    if(m.cardCounts) m.cardCounts[ev.playerId+'_y'] = Math.max(0,(m.cardCounts[ev.playerId+'_y']||1)-1);
+  } else if(ev.type==='blue'){
+    const p=getPlayer(ev.playerId); if(p) p.blue=Math.max(0,(p.blue||0)-1);
+  } else if(ev.type==='red'){
+    const p=getPlayer(ev.playerId); if(p) p.red=Math.max(0,(p.red||0)-1);
+  }
+  m.events.splice(eventIndex,1);
+  actionDiv(matchId).innerHTML='';
+  await saveSession(); await savePlayers(); render();
+}
+function openCard(matchId, side){
+  const m = getMatchById(matchId); if(!m) return;
+  const teamIdx = side==='A'?m.teamA:m.teamB;
+  const players = state.session.teams[teamIdx].players.map(getPlayer).filter(Boolean);
+  actionDiv(matchId).innerHTML = `<div class="card">
+    <label class="lbl">Cartão para quem? (${teamColorName(teamIdx)})</label>
+    <select id="cardPlayerSel_${matchId}">${players.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}</select>
+    <div class="segrow" style="margin-top:10px;">
+      <div class="seg on" id="cardYellowBtn_${matchId}" onclick="pickCardColor('${matchId}','yellow')">🟨 Amarelo</div>
+      <div class="seg" id="cardBlueBtn_${matchId}" onclick="pickCardColor('${matchId}','blue')">🟦 Azul</div>
+      <div class="seg" id="cardRedBtn_${matchId}" onclick="pickCardColor('${matchId}','red')">🟥 Vermelho</div>
+    </div>
+    <div class="row"><button class="btn btn-primary" style="flex:1;" onclick="confirmCard('${matchId}','${side}')">Confirmar</button>
+    <button class="btn btn-outline" onclick="actionDiv('${matchId}').innerHTML=''">Cancelar</button></div></div>`;
+  pickCardColorVal='yellow';
+}
+let pickCardColorVal='yellow';
+function pickCardColor(matchId, c){
+  pickCardColorVal=c;
+  document.getElementById('cardYellowBtn_'+matchId).classList.toggle('on',c==='yellow');
+  document.getElementById('cardBlueBtn_'+matchId).classList.toggle('on',c==='blue');
+  document.getElementById('cardRedBtn_'+matchId).classList.toggle('on',c==='red');
+}
+async function confirmCard(matchId, side){
+  const m = getMatchById(matchId); if(!m) return;
+  const playerId = document.getElementById('cardPlayerSel_'+matchId).value;
+  let type = pickCardColorVal;
+  m.cardCounts = m.cardCounts||{};
+  const prevY = m.cardCounts[playerId+'_y']||0;
+  if(type==='yellow' && prevY>=1) type='red';
+  if(type==='yellow') m.cardCounts[playerId+'_y']=prevY+1;
+  m.events.push({type, playerId, side});
+  const p = getPlayer(playerId);
+  if(p){
+    if(type==='yellow') p.yellow=(p.yellow||0)+1;
+    else if(type==='blue') p.blue=(p.blue||0)+1;
+    else p.red=(p.red||0)+1;
+  }
+  actionDiv(matchId).innerHTML='';
+  await saveSession(); await savePlayers(); render();
+}
+async function finishMatch(){
+  const m = getLiveMatch(); if(!m) return;
+  if(!confirm('Encerrar esta partida?')) return;
+  m.finished = true;
+  const teamA = state.session.teams[m.teamA].players, teamB = state.session.teams[m.teamB].players;
+  const winner = m.scoreA>m.scoreB ? 'A' : m.scoreB>m.scoreA ? 'B' : null;
+  teamA.forEach(pid=>{
+    const p=getPlayer(pid); if(!p) return;
+    p.matchesPlayed=(p.matchesPlayed||0)+1;
+    if(winner==='A') p.wins=(p.wins||0)+1;
+    if(p.position==='GOL'){ p.gamesAsGK=(p.gamesAsGK||0)+1; if(m.scoreB===0) p.cleanSheets=(p.cleanSheets||0)+1; p.goalsConceded=(p.goalsConceded||0)+m.scoreB; }
+  });
+  teamB.forEach(pid=>{
+    const p=getPlayer(pid); if(!p) return;
+    p.matchesPlayed=(p.matchesPlayed||0)+1;
+    if(winner==='B') p.wins=(p.wins||0)+1;
+    if(p.position==='GOL'){ p.gamesAsGK=(p.gamesAsGK||0)+1; if(m.scoreA===0) p.cleanSheets=(p.cleanSheets||0)+1; p.goalsConceded=(p.goalsConceded||0)+m.scoreA; }
+  });
+  await saveSession(); await savePlayers(); render();
+}
+
+/* ================= RANKING ================= */
+function computeStandings(){
+  const teams = state.session.teams || [];
+  const tabela = teams.map((t,i)=>({idx:i, nome:teamColorName(i), j:0, v:0, e:0, d:0, gp:0, gc:0, sg:0, pts:0}));
+  const finalizadas = (state.session.matches || []).filter(m=>m.finished);
+  finalizadas.forEach(m=>{
+    const A = tabela[m.teamA], B = tabela[m.teamB];
+    if(!A || !B) return;
+    A.j++; B.j++;
+    A.gp += m.scoreA; A.gc += m.scoreB;
+    B.gp += m.scoreB; B.gc += m.scoreA;
+    if(m.scoreA > m.scoreB){ A.v++; A.pts+=3; B.d++; }
+    else if(m.scoreB > m.scoreA){ B.v++; B.pts+=3; A.d++; }
+    else { A.e++; B.e++; A.pts+=1; B.pts+=1; }
+  });
+  tabela.forEach(t=> t.sg = t.gp - t.gc);
+  tabela.sort((a,b)=> b.pts-a.pts || b.sg-a.sg || b.gp-a.gp || a.nome.localeCompare(b.nome));
+  return tabela;
+}
+function computeStandingsComSimulacao(){
+  const teams = state.session.teams || [];
+  const tabela = teams.map((t,i)=>({idx:i, nome:teamColorName(i), j:0, v:0, e:0, d:0, gp:0, gc:0, sg:0, pts:0}));
+  const finalizadas = (state.session.matches || []).filter(m=>m.finished);
+  const todasPartidas = finalizadas.concat(simulacaoJogos);
+  todasPartidas.forEach(m=>{
+    const A = tabela[m.teamA], B = tabela[m.teamB];
+    if(!A || !B) return;
+    A.j++; B.j++;
+    A.gp += m.scoreA; A.gc += m.scoreB;
+    B.gp += m.scoreB; B.gc += m.scoreA;
+    if(m.scoreA > m.scoreB){ A.v++; A.pts+=3; B.d++; }
+    else if(m.scoreB > m.scoreA){ B.v++; B.pts+=3; A.d++; }
+    else { A.e++; B.e++; A.pts+=1; B.pts+=1; }
+  });
+  tabela.forEach(t=> t.sg = t.gp - t.gc);
+  tabela.sort((a,b)=> b.pts-a.pts || b.sg-a.sg || b.gp-a.gp || a.nome.localeCompare(b.nome));
+  return tabela;
+}
+function renderStandingsTable(tabela){
+  return `<div style="overflow-x:auto;"><table class="rank" style="min-width:100%;">
+    <thead><tr><th>Time</th><th style="text-align:center;">J</th><th style="text-align:center;">V</th><th style="text-align:center;">E</th><th style="text-align:center;">D</th><th style="text-align:center;">GP</th><th style="text-align:center;">GC</th><th style="text-align:center;">SG</th><th style="text-align:center;">Pts</th></tr></thead>
+    <tbody>
+      ${tabela.map((t,i)=>`<tr>
+        <td><span class="pos ${i===0?'p1':i===1?'p2':i===2?'p3':''}" style="margin-right:5px;">${i+1}</span>${escapeHtml(t.nome)}</td>
+        <td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${t.j}</td>
+        <td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${t.v}</td>
+        <td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${t.e}</td>
+        <td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${t.d}</td>
+        <td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${t.gp}</td>
+        <td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${t.gc}</td>
+        <td class="num" style="color:${t.sg>0?'var(--green-light)':t.sg<0?'var(--danger)':'var(--white)'}; font-family:inherit; font-size:13px;">${t.sg>0?'+':''}${t.sg}</td>
+        <td class="num" style="font-size:17px;">${t.pts}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+function renderSimulacao(){
+  const teams = state.session.teams || [];
+  let html = `<button class="btn btn-ghost btn-sm" onclick="fecharSimulacao()">← Voltar</button>`;
+  html += `<div class="eyebrow" style="margin-top:10px;">🔮 Simulação de rodadas futuras</div>`;
+  html += `<div class="meta" style="margin-bottom:10px;">Adicione placares hipotéticos pra ver como o campeonato pode terminar. Nada aqui é salvo nem afeta a tabela oficial — some se você sair dessa tela.</div>`;
+
+  if(teams.length<2){
+    html += `<div class="empty"><span class="icon">🎲</span><div class="msg">Sorteie os times primeiro na aba Sorteio.</div></div>`;
+    return html;
+  }
+
+  html += `<div class="eyebrow">Tabela oficial <small>ponto de partida</small></div>`;
+  html += `<div class="card">${renderStandingsTable(computeStandings())}</div>`;
+
+  html += `<div class="eyebrow">Adicionar placar simulado</div>`;
+  html += `<div class="card">
+    <div class="grid2" style="margin-bottom:8px;">
+      <select id="simTeamA">${teams.map((t,i)=>`<option value="${i}">${teamColorName(i)}</option>`).join('')}</select>
+      <select id="simTeamB">${teams.map((t,i)=>`<option value="${i}" ${i===1?'selected':''}>${teamColorName(i)}</option>`).join('')}</select>
+    </div>
+    <div class="grid2" style="margin-bottom:10px;">
+      <input type="number" id="simScoreA" placeholder="Placar Time A" min="0" value="0">
+      <input type="number" id="simScoreB" placeholder="Placar Time B" min="0" value="0">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="addSimulacao()">+ Adicionar ao cenário</button>
+  </div>`;
+
+  if(simulacaoJogos.length>0){
+    html += `<div class="eyebrow">Placares simulados <small>${simulacaoJogos.length} jogo(s)</small></div>`;
+    simulacaoJogos.forEach((m,idx)=>{
+      html += `<div class="card row between">
+        <span class="badge" style="background:${teamColorHex(m.teamA)}; color:#fff;">${teamColorName(m.teamA)}</span>
+        <span style="font-family:'Rajdhani'; font-weight:700; font-size:16px;">${m.scoreA} × ${m.scoreB}</span>
+        <span class="badge" style="background:${teamColorHex(m.teamB)}; color:#fff;">${teamColorName(m.teamB)}</span>
+        <button class="btn btn-danger btn-sm" onclick="removerSimulacao(${idx})">✕</button>
+      </div>`;
+    });
+    html += `<button class="btn btn-outline btn-block" style="margin-bottom:14px;" onclick="limparSimulacao()">🗑️ Limpar simulação</button>`;
+  }
+
+  html += `<div class="eyebrow">📊 Tabela simulada <small>como pode terminar</small></div>`;
+  html += `<div class="card">${renderStandingsTable(computeStandingsComSimulacao())}</div>`;
+  html += `<div class="meta" style="text-align:center;">⚠️ Cenário fictício — não é salvo em nenhum lugar.</div>`;
+  return html;
+}
+function addSimulacao(){
+  const teams = state.session.teams;
+  const a = parseInt(document.getElementById('simTeamA').value);
+  const b = parseInt(document.getElementById('simTeamB').value);
+  if(a===b){ alert('Escolha dois times diferentes.'); return; }
+  const scoreA = Math.max(0, parseInt(document.getElementById('simScoreA').value)||0);
+  const scoreB = Math.max(0, parseInt(document.getElementById('simScoreB').value)||0);
+  simulacaoJogos.push({teamA:a, teamB:b, scoreA, scoreB});
+  render();
+}
+function removerSimulacao(idx){
+  simulacaoJogos.splice(idx,1);
+  render();
+}
+function limparSimulacao(){
+  if(simulacaoJogos.length===0) return;
+  if(!confirm('Limpar todos os placares simulados?')) return;
+  simulacaoJogos = [];
+  render();
+}
+function computeH2H(){
+  const finalizadas = (state.session.matches || []).filter(m=>m.finished);
+  const pares = {};
+  finalizadas.forEach(m=>{
+    const menor = Math.min(m.teamA, m.teamB), maior = Math.max(m.teamA, m.teamB);
+    const chave = menor+'_'+maior;
+    if(!pares[chave]) pares[chave] = { timeMenor:menor, timeMaior:maior, jogos:0, vMenor:0, vMaior:0, empates:0, golsMenor:0, golsMaior:0 };
+    const par = pares[chave];
+    par.jogos++;
+    const scoreMenor = m.teamA===menor ? m.scoreA : m.scoreB;
+    const scoreMaior = m.teamA===maior ? m.scoreA : m.scoreB;
+    par.golsMenor += scoreMenor; par.golsMaior += scoreMaior;
+    if(scoreMenor>scoreMaior) par.vMenor++;
+    else if(scoreMaior>scoreMenor) par.vMaior++;
+    else par.empates++;
+  });
+  return Object.values(pares).sort((a,b)=> b.jogos-a.jogos);
+}
+let rankingDia = 'ambos';
+function setRankingDia(d){ rankingDia = d; render(); }
+function computeStatsPorDia(dia){
+  const gols = {}, assist = {}, amarelo = {}, azul = {}, vermelho = {};
+  (state.session.matches||[]).forEach(m=>{
+    if(dia!=='ambos' && (m.dia||'sabado')!==dia) return;
+    (m.events||[]).forEach(ev=>{
+      if(ev.type==='goal') gols[ev.playerId]=(gols[ev.playerId]||0)+1;
+      if(ev.type==='assist') assist[ev.playerId]=(assist[ev.playerId]||0)+1;
+      if(ev.type==='yellow') amarelo[ev.playerId]=(amarelo[ev.playerId]||0)+1;
+      if(ev.type==='blue') azul[ev.playerId]=(azul[ev.playerId]||0)+1;
+      if(ev.type==='red') vermelho[ev.playerId]=(vermelho[ev.playerId]||0)+1;
+    });
+  });
+  return {gols, assist, amarelo, azul, vermelho};
+}
+function renderRanking(){
+  const statsDia = computeStatsPorDia(rankingDia);
+  const players = rankingDia==='ambos' ? state.players : state.players.map(p=>({...p,
+    goals: statsDia.gols[p.id]||0, assists: statsDia.assist[p.id]||0,
+    yellow: statsDia.amarelo[p.id]||0, blue: statsDia.azul[p.id]||0, red: statsDia.vermelho[p.id]||0 }));
+  function table(list,key,icon,fmt){
+    const rows = list.filter(p=>(p[key]||0)>0);
+    if(rows.length===0) return `<div class="empty"><span class="icon">${icon}</span><div class="msg">Ainda sem dados registrados.</div></div>`;
+    return `<table class="rank"><thead><tr><th></th><th>Jogador</th><th style="text-align:center;">${icon}</th></tr></thead><tbody>
+      ${rows.map((p,i)=>`<tr><td><span class="pos ${i===0?'p1':i===1?'p2':i===2?'p3':''}">${i+1}</span></td><td onclick="abrirPerfil('${p.id}')" style="cursor:pointer; text-decoration:underline dotted;">${escapeHtml(p.name)}</td><td class="num">${fmt?fmt(p):p[key]}</td></tr>`).join('')}
+    </tbody></table>`;
+  }
+  const artilheiros = players.slice().sort((a,b)=>(b.goals||0)-(a.goals||0));
+  const garcons = players.slice().sort((a,b)=>(b.assists||0)-(a.assists||0));
+  const vitorias = players.slice().sort((a,b)=>(b.wins||0)-(a.wins||0));
+  const aproveitamento = players.filter(p=>(p.matchesPlayed||0)>=3).map(p=>({...p, pct: Math.round((p.wins||0)/(p.matchesPlayed||1)*100)})).sort((a,b)=>b.pct-a.pct);
+  const cartoes = players.filter(p=>(p.yellow||0)+(p.blue||0)+(p.red||0)>0).sort((a,b)=>((b.yellow||0)+2*(b.blue||0)+3*(b.red||0))-((a.yellow||0)+2*(a.blue||0)+3*(a.red||0)));
+
+  let html = `<div class="segrow" style="margin-bottom:6px;">
+    <div class="seg ${rankingDia==='ambos'?'on':''}" onclick="setRankingDia('ambos')">Todos os dias</div>
+    <div class="seg ${rankingDia==='quinta'?'on':''}" onclick="setRankingDia('quinta')">📅 Quinta</div>
+    <div class="seg ${rankingDia==='sabado'?'on':''}" onclick="setRankingDia('sabado')">📅 Sábado</div>
+  </div>`;
+  if(rankingDia!=='ambos'){
+    html += `<div class="meta" style="margin-bottom:10px;">Gols, assistências e cartões de ${rankingDia==='quinta'?'Quinta':'Sábado'} (partidas ainda guardadas no app). Vitórias e goleiros seguem como total geral.</div>`;
+  }
+  html += `<div class="eyebrow">🥇 Artilharia</div><div class="card">${table(artilheiros,'goals','⚽')}</div>`;
+  html += `<div class="eyebrow">🎯 Garçons (assistências)</div><div class="card">${table(garcons,'assists','🎯')}</div>`;
+  html += `<div class="eyebrow">🏅 Mais vitórias</div><div class="card">${table(vitorias,'wins','🏅')}</div>`;
+  const goleiros = players.filter(p=>(p.gamesAsGK||0)>0).sort((a,b)=>{
+    const mediaA = (a.goalsConceded||0)/(a.gamesAsGK||1);
+    const mediaB = (b.goalsConceded||0)/(b.gamesAsGK||1);
+    return mediaA - mediaB;
+  });
+  html += `<div class="eyebrow">🧤 Goleiros <small>menor média de gols sofridos por jogo</small></div><div class="card">${
+    goleiros.length===0 ? '<div class="empty"><span class="icon">🧤</span><div class="msg">Nenhum goleiro com partidas encerradas ainda.</div></div>'
+    : `<table class="rank"><thead><tr><th></th><th>Jogador</th><th style="text-align:center;">Jogos</th><th style="text-align:center;">Sofridos</th><th style="text-align:center;">Média</th><th style="text-align:center;">Sem sofrer</th></tr></thead><tbody>
+        ${goleiros.map((p,i)=>{
+          const media = ((p.goalsConceded||0)/(p.gamesAsGK||1)).toFixed(2);
+          return `<tr><td><span class="pos ${i===0?'p1':i===1?'p2':i===2?'p3':''}">${i+1}</span></td><td onclick="abrirPerfil('${p.id}')" style="cursor:pointer; text-decoration:underline dotted;">${escapeHtml(p.name)}</td><td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${p.gamesAsGK||0}</td><td class="num" style="color:var(--white); font-family:inherit; font-size:13px;">${p.goalsConceded||0}</td><td class="num" style="color:var(--green-light); font-family:inherit; font-size:13px;">${media}</td><td class="num">${p.cleanSheets||0}</td></tr>`;
+        }).join('')}
+      </tbody></table>`
+  }</div>`;
+  html += `<div class="eyebrow">📈 Melhor aproveitamento <small>mín. 3 jogos</small></div><div class="card">${
+    aproveitamento.length===0 ? '<div class="empty"><span class="icon">📈</span><div class="msg">Ainda sem jogadores com 3+ partidas.</div></div>'
+    : table(aproveitamento,'pct','%',p=>p.pct+'%')
+  }</div>`;
+  html += `<div class="eyebrow">🟨🟦🟥 Cartões</div><div class="card">${
+    cartoes.length===0 ? '<div class="empty"><span class="icon">🟨</span><div class="msg">Nenhum cartão registrado ainda.</div></div>'
+    : `<table class="rank"><thead><tr><th>Jogador</th><th style="text-align:center;">🟨</th><th style="text-align:center;">🟦</th><th style="text-align:center;">🟥</th></tr></thead><tbody>
+        ${cartoes.map(p=>`<tr><td>${escapeHtml(p.name)}</td><td class="num">${p.yellow||0}</td><td class="num" style="color:var(--blue-card);">${p.blue||0}</td><td class="num" style="color:var(--danger);">${p.red||0}</td></tr>`).join('')}
+      </tbody></table>`
+  }</div>`;
+  html += `<button class="btn btn-primary btn-block" onclick="compartilharRanking()" style="margin-bottom:10px;">📤 Compartilhar ranking (imagem)</button>`;
+  html += `<div class="divider"></div>
+    <button class="btn btn-danger btn-block" onclick="zerarRanking()">🗑️ Zerar ranking (apaga gols, assistências, cartões e vitórias de todos)</button>`;
+  return html;
+}
+function gerarImagemRanking(){
+  const players = state.players;
+  const artilheiros = players.filter(p=>(p.goals||0)>0).sort((a,b)=>(b.goals||0)-(a.goals||0)).slice(0,5);
+  const garcons = players.filter(p=>(p.assists||0)>0).sort((a,b)=>(b.assists||0)-(a.assists||0)).slice(0,5);
+  const vitorias = players.filter(p=>(p.wins||0)>0).sort((a,b)=>(b.wins||0)-(a.wins||0)).slice(0,5);
+  const cartoes = players.filter(p=>(p.yellow||0)+(p.blue||0)+(p.red||0)>0)
+    .sort((a,b)=>((b.yellow||0)+2*(b.blue||0)+3*(b.red||0))-((a.yellow||0)+2*(a.blue||0)+3*(a.red||0))).slice(0,5);
+  const classificacao = computeStandings().filter(t=>t.j>0);
+
+  const sections = [
+    {title:'🥇 Artilharia', icon:'⚽', rows: artilheiros.map(p=>[p.name, String(p.goals||0)])},
+    {title:'🎯 Garçons (assistências)', icon:'🎯', rows: garcons.map(p=>[p.name, String(p.assists||0)])},
+    {title:'🏅 Mais vitórias', icon:'🏅', rows: vitorias.map(p=>[p.name, String(p.wins||0)])},
+    {title:'🟨🟦🟥 Cartões', icon:'🟨', rows: cartoes.map(p=>[p.name, `${p.yellow||0} 🟨  ${p.blue||0} 🟦  ${p.red||0} 🟥`])},
+  ].filter(s=>s.rows.length>0);
+
+  const W = 720;
+  const headerH = 150;
+  const classifTitleH = classificacao.length>0 ? 36 : 0;
+  const classifHeaderH = classificacao.length>0 ? 30 : 0;
+  const classifRowH = 40;
+  const classifGap = classificacao.length>0 ? 22 : 0;
+  const sectionTitleH = 44;
+  const rowH = 38;
+  const sectionGap = 16;
+  const footerH = 46;
+  let H = headerH;
+  H += classifTitleH + classifHeaderH + classificacao.length*classifRowH + classifGap;
+  sections.forEach(s=> H += sectionTitleH + s.rows.length*rowH + sectionGap);
+  H += footerH;
+  if(sections.length===0 && classificacao.length===0) H += 60;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, '#12171c');
+  grad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 30px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 50);
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 22px Arial, sans-serif';
+  ctx.fillText('Ranking', W/2, 82);
+
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '15px Arial, sans-serif';
+  ctx.fillText(todayLabel(), W/2, 108);
+
+  let y = headerH;
+
+  // tabela de classificação (colunas de verdade, igual ao app)
+  if(classificacao.length>0){
+    ctx.fillStyle = '#E4B93B';
+    ctx.font = 'bold 19px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('🏆 Classificação', 30, y+24);
+    y += classifTitleH;
+
+    const tableX = 24, tableW = W-48;
+    const nameW = 230;
+    const statW = (tableW-nameW)/8;
+    const statCols = ['J','V','E','D','GP','GC','SG','PTS'];
+
+    // cabeçalho
+    ctx.fillStyle = '#8A8F98';
+    ctx.font = 'bold 12px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('TIME', tableX+42, y+20);
+    statCols.forEach((c,ci)=>{
+      ctx.textAlign = 'center';
+      ctx.fillText(c, tableX+nameW+statW*ci+statW/2, y+20);
+    });
+    y += classifHeaderH;
+
+    classificacao.forEach((t,i)=>{
+      if(i%2===0){ ctx.fillStyle='rgba(255,255,255,0.03)'; ctx.fillRect(tableX,y,tableW,classifRowH); }
+      // posição
+      const posColors = ['#E4B93B','#c8ccc8','#c98a4e'];
+      if(i<3){
+        ctx.fillStyle = posColors[i];
+        roundRect(ctx, tableX+8, y+8, 24, 24, 6);
+        ctx.fill();
+        ctx.fillStyle = '#1a1305';
+        ctx.font = 'bold 13px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(i+1), tableX+20, y+25);
+      } else {
+        ctx.fillStyle = '#8A8F98';
+        ctx.font = 'bold 13px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(i+1)+'.', tableX+20, y+25);
+      }
+      ctx.fillStyle = '#F5F6F7';
+      ctx.font = i===0 ? 'bold 16px Arial, sans-serif' : '16px Arial, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(t.nome, tableX+42, y+25, nameW-46);
+
+      const stats = [t.j, t.v, t.e, t.d, t.gp, t.gc, (t.sg>0?'+':'')+t.sg, t.pts];
+      stats.forEach((val,ci)=>{
+        ctx.fillStyle = ci===7 ? '#4CAF50' : (ci===6 && t.sg<0) ? '#E5484D' : ci===6 && t.sg>0 ? '#4CAF50' : '#F5F6F7';
+        ctx.font = ci===7 ? 'bold 16px Arial, sans-serif' : '13px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(val), tableX+nameW+statW*ci+statW/2, y+25);
+      });
+      y += classifRowH;
+    });
+    y += classifGap;
+  }
+
+  if(sections.length===0 && classificacao.length===0){
+    ctx.fillStyle = '#565B63';
+    ctx.font = 'italic 16px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Ainda sem estatísticas registradas', W/2, y+30);
+  }
+  sections.forEach(sec=>{
+    ctx.fillStyle = '#E4B93B';
+    ctx.font = 'bold 19px Arial, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(sec.title, 30, y+26);
+    y += sectionTitleH;
+    sec.rows.forEach((row,i)=>{
+      if(i%2===0){ ctx.fillStyle='rgba(255,255,255,0.03)'; ctx.fillRect(24,y,W-48,rowH); }
+      ctx.fillStyle = i===0 ? '#E4B93B' : '#F5F6F7';
+      ctx.font = 'bold 16px Arial, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${i+1}. ${row[0]}`, 42, y+25);
+      ctx.fillStyle = '#8A8F98';
+      ctx.font = '16px Arial, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(row[1], W-42, y+25);
+      y += rowH;
+    });
+    y += sectionGap;
+  });
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharRanking(){
+  if(state.players.length===0){ alert('Cadastre jogadores e registre estatísticas primeiro.'); return; }
+  await compartilharImagemGenerica(gerarImagemRanking(), 'ranking.png', 'Ranking');
+}
+async function zerarRanking(){
+  if(!confirm('Isso vai zerar o ranking de TODOS os jogadores: gols, assistências, cartões, vitórias, jogos disputados e estatísticas de goleiro. Essa ação não pode ser desfeita. Continuar?')) return;
+  state.players.forEach(p=>{
+    p.goals = 0; p.assists = 0; p.yellow = 0; p.blue = 0; p.red = 0; p.wins = 0; p.matchesPlayed = 0;
+    p.gamesAsGK = 0; p.cleanSheets = 0; p.goalsConceded = 0;
+  });
+  await savePlayers();
+  render();
+}
+
+/* ================= FINANCEIRO ================= */
+let financeiroMonth = null; // 'YYYY-MM' — null significa mês atual
+
+function currentFinanceiroMonth(){ return financeiroMonth || monthKey(); }
+function labelForMonth(mk){
+  const [y,m] = mk.split('-').map(Number);
+  return new Date(y, m-1, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
+}
+function shiftMonth(mk, delta){
+  const [y,m] = mk.split('-').map(Number);
+  const d = new Date(y, m-1+delta, 1);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function goToMonth(delta){
+  financeiroMonth = shiftMonth(currentFinanceiroMonth(), delta);
+  render();
+}
+function goToCurrentMonth(){ financeiroMonth = null; render(); }
+
+/* ================= PIX (QR CODE) ================= */
+function emvField(id, value){
+  const len = String(value.length).padStart(2,'0');
+  return id + len + value;
+}
+function crc16ccitt(str){
+  let crc = 0xFFFF;
+  for(let i=0;i<str.length;i++){
+    crc ^= (str.charCodeAt(i) << 8);
+    for(let j=0;j<8;j++){
+      crc = (crc & 0x8000) ? ((crc<<1) ^ 0x1021) & 0xFFFF : (crc<<1) & 0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4,'0');
+}
+function normalizarTextoPix(str){
+  return (str||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9 ]/g,'');
+}
+function gerarPayloadPix(chave, nome, cidade, valor, txid){
+  nome = normalizarTextoPix(nome||'PELADA').substring(0,25) || 'PELADA';
+  cidade = normalizarTextoPix(cidade||'BRASIL').substring(0,15) || 'BRASIL';
+  txid = (txid||'***').replace(/[^a-zA-Z0-9]/g,'').substring(0,25) || '***';
+  const merchantAccountInfo = emvField('26', emvField('00','BR.GOV.BCB.PIX') + emvField('01', chave));
+  const valorField = valor ? emvField('54', Number(valor).toFixed(2)) : '';
+  let payload = emvField('00','01') + merchantAccountInfo + emvField('52','0000') + emvField('53','986') +
+    valorField + emvField('58','BR') + emvField('59', nome) + emvField('60', cidade) +
+    emvField('62', emvField('05', txid)) + '6304';
+  return payload + crc16ccitt(payload);
+}
+async function configurarPix(){
+  const atual = state.settings.pix || {};
+  const chave = prompt('Chave Pix (CPF, celular, e-mail ou chave aleatória):', atual.chave||'');
+  if(chave===null) return;
+  const nome = prompt('Nome do recebedor (como aparece no Pix):', atual.nome||'');
+  if(nome===null) return;
+  const cidade = prompt('Cidade do recebedor:', atual.cidade||'');
+  if(cidade===null) return;
+  state.settings.pix = { chave: chave.trim(), nome: nome.trim(), cidade: cidade.trim() };
+  await saveSettings();
+  render();
+}
+let qrPixAberto = null;
+function abrirQrPix(playerId){
+  const p = getPlayer(playerId); if(!p) return;
+  const pix = state.settings.pix;
+  if(!pix || !pix.chave){ alert('Configure sua chave Pix primeiro, no botão "⚙️ Configurar Pix" no topo da aba.'); return; }
+  const due = (p.dues||[]).find(d=>d.month===currentFinanceiroMonth());
+  if(!due){ alert('Esse jogador não tem cobrança lançada nesse mês.'); return; }
+  const payload = gerarPayloadPix(pix.chave, pix.nome, pix.cidade, due.value, 'PELADA'+p.id.slice(0,6).toUpperCase());
+  qrPixAberto = { playerId, payload };
+  render();
+}
+function fecharQrPix(){
+  qrPixAberto = null;
+  render();
+}
+function desenharQrPix(){
+  if(!qrPixAberto) return;
+  const el = document.getElementById('qrcode-container');
+  if(!el) return;
+  el.innerHTML = '';
+  try{
+    if(typeof QRCode === 'undefined'){ el.innerHTML = '<div class="meta">Não consegui carregar o gerador de QR Code — verifique sua internet.</div>'; return; }
+    new QRCode(el, { text: qrPixAberto.payload, width:220, height:220, colorDark:'#101317', colorLight:'#ffffff' });
+  }catch(e){
+    console.error(e);
+    el.innerHTML = '<div class="meta">Não consegui gerar o QR Code.</div>';
+  }
+}
+async function copiarCodigoPix(){
+  if(!qrPixAberto) return;
+  try{
+    await navigator.clipboard.writeText(qrPixAberto.payload);
+    alert('Código Pix copiado! É só colar no app do banco em "Pix Copia e Cola".');
+  }catch(e){
+    alert('Não consegui copiar automaticamente. Toque e segure no código pra copiar manualmente.');
+  }
+}
+function gerarImagemCobranca(playerId){
+  const p = getPlayer(playerId); if(!p) return null;
+  const mk = currentFinanceiroMonth();
+  const due = (p.dues||[]).find(d=>d.month===mk);
+  if(!due) return null;
+  const W = 720;
+  const headerH = 150;
+  const qrSize = 280;
+  const footerH = 110;
+  const H = headerH + qrSize + 40 + footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, '#12171c');
+  grad.addColorStop(1, '#0a0d10');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4CAF50';
+  ctx.font = 'bold 28px Arial, sans-serif';
+  ctx.fillText(state.settings.groupName || 'Pelada', W/2, 46);
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = 'bold 22px Arial, sans-serif';
+  ctx.fillText('Cobrança Pix', W/2, 78);
+
+  ctx.fillStyle = '#8A8F98';
+  ctx.font = '15px Arial, sans-serif';
+  ctx.fillText(`${p.name} · ${labelForMonth(mk)}`, W/2, 105);
+
+  ctx.fillStyle = '#E4B93B';
+  ctx.font = 'bold 30px Arial, sans-serif';
+  ctx.fillText(`R$ ${due.value}`, W/2, 140);
+
+  const qrCanvas = document.querySelector('#qrcode-container canvas');
+  const qrX = (W-qrSize)/2, qrY = headerH;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(qrX-12, qrY-12, qrSize+24, qrSize+24);
+  if(qrCanvas){
+    ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
+  } else {
+    ctx.fillStyle = '#999';
+    ctx.font = '14px Arial, sans-serif';
+    ctx.fillText('QR indisponível', W/2, qrY+qrSize/2);
+  }
+
+  ctx.fillStyle = '#F5F6F7';
+  ctx.font = '15px Arial, sans-serif';
+  ctx.fillText('Escaneie com o app do seu banco', W/2, qrY+qrSize+40);
+  ctx.fillText('ou use "Pix Copia e Cola"', W/2, qrY+qrSize+62);
+
+  ctx.fillStyle = '#565B63';
+  ctx.font = '13px Arial, sans-serif';
+  ctx.fillText('Gerado pelo app da pelada', W/2, H-18);
+
+  return canvas;
+}
+async function compartilharCobranca(){
+  if(!qrPixAberto) return;
+  const canvas = gerarImagemCobranca(qrPixAberto.playerId);
+  if(!canvas){ alert('Não encontrei essa cobrança.'); return; }
+  await compartilharImagemGenerica(canvas, 'cobranca-pix.png', 'Cobrança Pix');
+}
+function renderFinanceiro(){
+  const mk = currentFinanceiroMonth();
+  const isCurrent = mk === monthKey();
+  const year = mk.split('-')[0];
+  const players = state.players.filter(p=>!p.guest).sort((a,b)=>a.name.localeCompare(b.name));
+  let recebido=0, pendente=0, inadimplentes=0;
+  players.forEach(p=>{
+    const due = (p.dues||[]).find(d=>d.month===mk);
+    if(due){ if(due.status==='pago') recebido += due.value; else { pendente += due.value; inadimplentes++; } }
+  });
+  const despesasDoMes = (state.despesas||[]).filter(d=>d.month===mk);
+  const totalDespesasMes = despesasDoMes.reduce((s,d)=>s+d.valor,0);
+  const saldoMes = recebido - totalDespesasMes;
+
+  // resumo do ano inteiro
+  const meses = Array.from({length:12}, (_,i)=>year+'-'+String(i+1).padStart(2,'0'));
+  const porMes = {}; meses.forEach(mkey=>porMes[mkey]={recebido:0, pendente:0, despesa:0});
+  let anoRecebido=0, anoPendente=0, anoDespesa=0;
+  players.forEach(p=>{
+    (p.dues||[]).forEach(d=>{
+      if(!porMes[d.month]) return;
+      if(d.status==='pago'){ porMes[d.month].recebido += d.value; anoRecebido += d.value; }
+      else { porMes[d.month].pendente += d.value; anoPendente += d.value; }
+    });
+  });
+  (state.despesas||[]).forEach(d=>{
+    if(!porMes[d.month]) return;
+    porMes[d.month].despesa += d.valor; anoDespesa += d.valor;
+  });
+
+  let html = `<div class="eyebrow">Caixa da pelada</div>`;
+  html += `<div class="card row between" style="padding:10px 12px;">
+    <button class="btn btn-ghost btn-sm" onclick="goToMonth(-1)">◀</button>
+    <div style="text-align:center;">
+      <div class="name" style="text-transform:capitalize;">${labelForMonth(mk)}</div>
+      ${!isCurrent ? `<div class="meta" style="cursor:pointer; color:var(--green-light);" onclick="goToCurrentMonth()">voltar pro mês atual</div>` : `<div class="meta">mês atual</div>`}
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="goToMonth(1)">▶</button>
+  </div>`;
+
+  html += `<div class="pillrow">
+    <div class="pill"><div class="v">R$${recebido}</div><div class="l">Recebido</div></div>
+    <div class="pill"><div class="v">R$${totalDespesasMes}</div><div class="l">Despesas</div></div>
+    <div class="pill"><div class="v" style="color:${saldoMes>=0?'var(--green-light)':'var(--danger)'};">R$${saldoMes}</div><div class="l">Saldo do mês</div></div>
+  </div>`;
+  html += `<div class="pillrow">
+    <div class="pill"><div class="v">R$${pendente}</div><div class="l">Em aberto</div></div>
+    <div class="pill"><div class="v">${inadimplentes}</div><div class="l">Inadimplentes</div></div>
+  </div>`;
+
+  html += `<button class="btn btn-outline btn-block" style="margin-bottom:10px;" onclick="exportarPlanilha()">📊 Exportar planilha (Excel)</button>`;
+
+  html += `<div class="card">
+    <div class="meta" style="margin-bottom:8px;">Pega as cobranças já lançadas em ${labelForMonth(mk)} e replica (mesmo valor e forma de pagamento) para os outros meses de ${year} que ainda estiverem vazios — sem mexer em meses que já têm cobrança lançada.</div>
+    <button class="btn btn-primary btn-block" onclick="replicarCobrancasDoAno()">🔁 Preencher o ano todo com base neste mês</button>
+  </div>`;
+
+  html += `<div class="eyebrow">Resumo de ${year} <small>ano todo</small></div>`;
+  html += `<div class="pillrow">
+    <div class="pill"><div class="v">R$${anoRecebido}</div><div class="l">Recebido</div></div>
+    <div class="pill"><div class="v">R$${anoDespesa}</div><div class="l">Despesas</div></div>
+    <div class="pill"><div class="v" style="color:${(anoRecebido-anoDespesa)>=0?'var(--green-light)':'var(--danger)'};">R$${anoRecebido-anoDespesa}</div><div class="l">Saldo</div></div>
+  </div>`;
+  html += `<div class="card">
+    <div style="overflow-x:auto;"><table class="rank" style="min-width:100%;">
+    <thead><tr><th>Mês</th><th style="text-align:center;">Receb.</th><th style="text-align:center;">Desp.</th><th style="text-align:center;">Saldo</th></tr></thead><tbody>
+      ${meses.map(mkey=>{
+        const nomeMes = labelForMonth(mkey).split(' de ')[0];
+        const destaque = mkey===mk ? 'style="color:var(--green-light); font-weight:700;"' : '';
+        const saldo = porMes[mkey].recebido - porMes[mkey].despesa;
+        return `<tr ${destaque}><td style="text-transform:capitalize;">${nomeMes}</td><td class="num">R$${porMes[mkey].recebido}</td><td class="num" style="color:var(--danger);">R$${porMes[mkey].despesa}</td><td class="num" style="color:${saldo>=0?'var(--green-light)':'var(--danger)'};">R$${saldo}</td></tr>`;
+      }).join('')}
+    </tbody></table></div>
+  </div>`;
+
+  html += `<div class="eyebrow">Despesas <small style="text-transform:capitalize;">${labelForMonth(mk)}</small></div>`;
+  html += `<button class="btn btn-outline btn-block" style="margin-bottom:10px;" onclick="addDespesa()">+ Lançar despesa</button>`;
+  if(despesasDoMes.length===0){
+    html += `<div class="empty"><span class="icon">🧾</span><div class="msg">Nenhuma despesa lançada nesse mês.</div></div>`;
+  } else {
+    despesasDoMes.forEach(d=>{
+      html += `<div class="card row between">
+        <div><div class="name">${escapeHtml(d.descricao)}</div><div class="meta">R$${d.valor}</div></div>
+        <div class="row" style="gap:6px;">
+          <button class="btn btn-ghost btn-sm" onclick="editarDespesa('${d.id}')">✏️ Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="removerDespesa('${d.id}')">✕</button>
+        </div>
+      </div>`;
+    });
+  }
+
+  html += `<div class="eyebrow">Mensalidades <small style="text-transform:capitalize;">${labelForMonth(mk)}</small></div>`;
+  html += `<button class="btn btn-outline btn-block" style="margin-bottom:10px;" onclick="abrirResumoAnual()">📊 Ver resumo do ano (todos, pendentes e pagos)</button>`;
+  html += `<div class="row between" style="margin-bottom:10px; align-items:flex-start;">
+    <div class="meta" style="flex:1;">Convidados não entram nessa lista automaticamente — só associados têm mensalidade por padrão.</div>
+    <button class="btn btn-ghost btn-sm" style="flex-shrink:0; margin-left:8px;" onclick="configurarPix()">⚙️ Configurar Pix</button>
+  </div>`;
+  if(qrPixAberto){
+    const pQr = getPlayer(qrPixAberto.playerId);
+    html += `<div class="card" style="text-align:center;">
+      <div class="name" style="margin-bottom:10px;">QR Pix — ${pQr?escapeHtml(pQr.name):''}</div>
+      <div id="qrcode-container" style="display:flex; justify-content:center; margin-bottom:10px;"></div>
+      <button class="btn btn-outline btn-block btn-sm" style="margin-bottom:6px;" onclick="copiarCodigoPix()">📋 Copiar código Pix</button>
+      <button class="btn btn-primary btn-block btn-sm" style="margin-bottom:6px;" onclick="compartilharCobranca()">📤 Compartilhar cobrança (imagem)</button>
+      <button class="btn btn-ghost btn-block btn-sm" onclick="fecharQrPix()">Fechar</button>
+    </div>`;
+  }
+  if(players.length===0){
+    html += `<div class="empty"><span class="icon">💰</span><div class="msg">Cadastre jogadores na aba Elenco para lançar cobranças.</div></div>`;
+  } else {
+    players.forEach(p=>{
+      const due = (p.dues||[]).find(d=>d.month===mk);
+      html += `<div class="card row between">
+        <div><div class="name">${escapeHtml(p.name)}</div>${due ? `<div class="meta">R$${due.value} · ${due.method}</div>` : '<div class="meta">Sem cobrança lançada</div>'}</div>
+        ${due
+          ? `<div class="row" style="gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+              ${due.status!=='pago' ? `<button class="btn btn-outline btn-sm" onclick="abrirQrPix('${p.id}')">📱 Pix</button>` : ''}
+              <button class="btn btn-ghost btn-sm" onclick="editarDue('${p.id}')">✏️ Editar</button>
+              <button class="btn btn-sm ${due.status==='pago'?'btn-primary':'btn-outline'}" onclick="toggleDue('${p.id}')">${due.status==='pago'?'Pago ✓':'Marcar pago'}</button>
+              <button class="btn btn-danger btn-sm" onclick="removeDue('${p.id}')">✕</button>
+            </div>`
+          : `<button class="btn btn-ghost btn-sm" onclick="addDue('${p.id}')">+ Lançar cobrança</button>`
+        }
+      </div>`;
+    });
+  }
+  return html;
+}
+async function addDespesa(){
+  const mk = currentFinanceiroMonth();
+  const descricao = prompt(`Descrição da despesa de ${labelForMonth(mk)} (ex: aluguel da quadra, bolas novas):`, '');
+  if(descricao===null || !descricao.trim()) return;
+  const valorStr = prompt('Valor da despesa (R$):', '');
+  if(valorStr===null) return;
+  const valor = parseFloat(valorStr) || 0;
+  state.despesas = state.despesas || [];
+  state.despesas.push({id:uid(), month:mk, descricao:descricao.trim(), valor});
+  await saveDespesas();
+  render();
+}
+async function editarDespesa(despesaId){
+  const d = (state.despesas||[]).find(x=>x.id===despesaId); if(!d) return;
+  const descricao = prompt('Descrição:', d.descricao);
+  if(descricao===null) return;
+  const valorStr = prompt('Valor (R$):', d.valor);
+  if(valorStr===null) return;
+  d.descricao = descricao.trim() || d.descricao;
+  d.valor = parseFloat(valorStr) || d.valor;
+  await saveDespesas();
+  render();
+}
+async function removerDespesa(despesaId){
+  if(!confirm('Remover essa despesa?')) return;
+  state.despesas = (state.despesas||[]).filter(x=>x.id!==despesaId);
+  await saveDespesas();
+  render();
+}
+function exportarPlanilha(){
+  if(typeof XLSX === 'undefined'){ alert('Não consegui carregar o gerador de planilha — verifique sua internet e tente de novo.'); return; }
+
+  const receitas = [];
+  state.players.filter(p=>!p.guest).forEach(p=>{
+    (p.dues||[]).slice().sort((a,b)=>a.month.localeCompare(b.month)).forEach(d=>{
+      receitas.push({ Jogador:p.name, Mes:labelForMonth(d.month), Valor:d.value, Forma:d.method, Status: d.status==='pago'?'Pago':'Pendente' });
+    });
+  });
+
+  const despesas = (state.despesas||[]).slice().sort((a,b)=>a.month.localeCompare(b.month)).map(d=>({
+    Mes: labelForMonth(d.month), Descricao: d.descricao, Valor: d.valor
+  }));
+
+  const porMes = {};
+  state.players.filter(p=>!p.guest).forEach(p=>{
+    (p.dues||[]).forEach(d=>{
+      porMes[d.month] = porMes[d.month] || {receita:0, despesa:0};
+      if(d.status==='pago') porMes[d.month].receita += d.value;
+    });
+  });
+  (state.despesas||[]).forEach(d=>{
+    porMes[d.month] = porMes[d.month] || {receita:0, despesa:0};
+    porMes[d.month].despesa += d.valor;
+  });
+  const resumo = Object.keys(porMes).sort().map(mk=>({
+    Mes: labelForMonth(mk),
+    Receita: porMes[mk].receita,
+    Despesa: porMes[mk].despesa,
+    Saldo: porMes[mk].receita - porMes[mk].despesa
+  }));
+  const totalReceita = resumo.reduce((s,r)=>s+r.Receita,0);
+  const totalDespesa = resumo.reduce((s,r)=>s+r.Despesa,0);
+  resumo.push({ Mes:'TOTAL', Receita:totalReceita, Despesa:totalDespesa, Saldo: totalReceita-totalDespesa });
+
+  if(receitas.length===0 && despesas.length===0){
+    alert('Ainda não há cobranças nem despesas lançadas pra exportar.');
+    return;
+  }
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumo), 'Resumo Mensal');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(receitas.length?receitas:[{Jogador:'',Mes:'',Valor:'',Forma:'',Status:''}]), 'Receitas');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(despesas.length?despesas:[{Mes:'',Descricao:'',Valor:''}]), 'Despesas');
+
+  const nomeArquivo = 'financeiro-' + normalizarTextoPix(state.settings.groupName||'pelada').replace(/\s+/g,'-').toLowerCase() + '.xlsx';
+  try{
+    XLSX.writeFile(wb, nomeArquivo);
+  }catch(e){
+    console.error(e);
+    alert('Não consegui gerar o arquivo da planilha.');
+  }
+}
+async function addDue(playerId){
+  const p = getPlayer(playerId); if(!p) return;
+  const mk = currentFinanceiroMonth();
+  const valueStr = prompt(`Valor da mensalidade de ${labelForMonth(mk)} (R$):`, '30');
+  if(valueStr===null) return;
+  const value = parseFloat(valueStr) || 0;
+  const method = prompt('Forma de pagamento (pix, dinheiro, cartão):', 'pix') || 'pix';
+  p.dues = p.dues || [];
+  p.dues = p.dues.filter(d=>d.month!==mk);
+  p.dues.push({id:uid(), month:mk, value, method, status:'pendente'});
+  await savePlayers(); render();
+}
+async function toggleDue(playerId){
+  const p = getPlayer(playerId); if(!p) return;
+  const mk = currentFinanceiroMonth();
+  const due = (p.dues||[]).find(d=>d.month===mk); if(!due) return;
+  due.status = due.status==='pago' ? 'pendente' : 'pago';
+  await savePlayers(); render();
+}
+async function editarDue(playerId){
+  const p = getPlayer(playerId); if(!p) return;
+  const mk = currentFinanceiroMonth();
+  const due = (p.dues||[]).find(d=>d.month===mk); if(!due) return;
+  const valueStr = prompt(`Editar valor da mensalidade de ${labelForMonth(mk)} (R$):`, due.value);
+  if(valueStr===null) return;
+  const method = prompt('Forma de pagamento:', due.method);
+  if(method===null) return;
+  due.value = parseFloat(valueStr) || due.value;
+  due.method = method.trim() || due.method;
+  await savePlayers(); render();
+}
+async function removeDue(playerId){
+  const p = getPlayer(playerId); if(!p) return;
+  const mk = currentFinanceiroMonth();
+  p.dues = (p.dues||[]).filter(d=>d.month!==mk);
+  await savePlayers(); render();
+}
+async function replicarCobrancasDoAno(){
+  const mk = currentFinanceiroMonth();
+  const year = mk.split('-')[0];
+  const comCobranca = state.players.filter(p=>(p.dues||[]).some(d=>d.month===mk));
+  if(comCobranca.length===0){
+    alert(`Não há nenhuma cobrança lançada em ${labelForMonth(mk)} pra usar como modelo. Lance a cobrança de pelo menos um jogador nesse mês primeiro.`);
+    return;
+  }
+  if(!confirm(`Isso vai pegar a cobrança de cada jogador em ${labelForMonth(mk)} e criar a mesma cobrança (valor e forma de pagamento) em todos os outros meses de ${year} que ainda estiverem vazios para aquele jogador. Meses que já têm cobrança lançada não serão alterados. Continuar?`)) return;
+
+  let created = 0;
+  comCobranca.forEach(p=>{
+    const template = (p.dues||[]).find(d=>d.month===mk);
+    if(!template) return;
+    for(let m=1; m<=12; m++){
+      const key = year + '-' + String(m).padStart(2,'0');
+      if(key===mk) continue;
+      p.dues = p.dues || [];
+      if(!p.dues.some(d=>d.month===key)){
+        p.dues.push({id:uid(), month:key, value:template.value, method:template.method, status:'pendente'});
+        created++;
+      }
+    }
+  });
+  await savePlayers();
+  render();
+  alert(`Pronto! ${created} cobrança(s) criada(s) para o restante do ano. Todas entram como "pendente" — é só ir marcando como pago mês a mês.`);
+}
+
+/* ================= INIT ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('service-worker.js').catch(e=>console.warn('SW falhou', e)); });
+}
+(async function init(){
+  if(!getGroupCode()){
+    renderOnboarding();
+    return;
+  }
+  await loadAll();
+  document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.t===currentTab));
+  render();
+})();
+</script>
+</body>
+</html>

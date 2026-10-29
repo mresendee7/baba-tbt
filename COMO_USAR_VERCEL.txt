@@ -1,0 +1,95 @@
+BABA TBT — COMO TER UM BANCO DE DADOS DE VERDADE (VERCEL + UPSTASH REDIS)
+=======================================================================
+
+Com isso, os dados passam a ficar guardados num servidor de verdade — ou seja,
+qualquer pessoa que abrir o app, em qualquer celular, vê e edita a MESMA
+lista de jogadores, chegada, partidas e financeiro (como era a ideia original).
+
+Isso troca o GitHub Pages: agora quem hospeda o site é a própria Vercel
+(ela também guarda o código no GitHub, só que passa a rodar como um site
+"inteligente" com backend, não mais um site estático).
+
+
+PASSO 1 — Criar conta na Vercel
+---------------------------------
+1. Acesse https://vercel.com
+2. Clique em "Sign Up" e escolha "Continue with GitHub"
+3. Autorize a Vercel a acessar sua conta do GitHub
+
+
+PASSO 2 — Importar o repositório
+-----------------------------------
+1. No painel da Vercel, clique em "Add New..." > "Project"
+2. Encontre o repositório "Baba-TBT" (ou o nome que você usou) na lista e
+   clique em "Import"
+3. Não precisa mudar nenhuma configuração — clique direto em "Deploy"
+4. Espere 1-2 minutos. A Vercel vai te dar um link novo, tipo:
+   https://baba-tbt.vercel.app
+
+   (Esse será o novo link oficial do app — não use mais o link do GitHub
+   Pages a partir de agora.)
+
+
+PASSO 3 — Adicionar os arquivos do banco de dados
+-----------------------------------------------------
+1. No seu repositório do GitHub, clique em "Add file" > "Create new file"
+2. No campo do nome, digite exatamente: api/data.js (com a barra — isso cria
+   a pasta "api" automaticamente) e cole o conteúdo do arquivo api/data.js
+3. Confirme que o package.json também está na raiz do repositório
+4. Confirme que o index.html na raiz é a versão mais recente
+5. Clique em "Commit changes"
+6. A Vercel detecta o novo commit sozinha e já refaz o deploy automaticamente
+   (leva menos de 1 minuto)
+
+
+PASSO 4 — Criar o banco de dados (Upstash Redis)
+------------------------------------------------
+Observação: o antigo "Vercel KV" foi descontinuado pela própria Vercel — hoje
+o caminho oficial é o mesmo serviço, só que através de um parceiro chamado
+Upstash, disponível direto no painel da Vercel.
+
+1. No painel da Vercel, abra o seu projeto
+2. Clique na aba "Storage" (Armazenamento)
+3. Na lista de provedores do Marketplace, escolha "Upstash"
+   (NÃO escolha Neon, Supabase, Postgres, Turso, MongoDB, etc. — esses são
+   bancos de tabelas SQL, e nem a opção "Redis" oficial, que conecta de um
+   jeito técnico diferente do que o código espera)
+4. Escolha o produto "Redis" dentro do Upstash
+5. Dê um nome (ex: baba-tbt-db) e confirme a criação
+6. Conecte ao seu projeto quando for perguntado — isso injeta as variáveis
+   de acesso automaticamente, sem você precisar copiar nem colar senha nenhuma
+7. Vá em "Deployments" e clique nos "..." do último deploy > "Redeploy"
+   (isso garante que o site já enxergue o banco recém-conectado)
+
+
+
+PASSO 5 — Testar
+--------------------
+1. Abra https://baba-tbt.vercel.app (o link novo da Vercel) no celular
+2. Cadastre um jogador
+3. Feche o app e abra de novo — o jogador deve continuar lá
+4. Se possível, abra o mesmo link em outro celular (ou peça pra outra pessoa
+   da pelada abrir) — o jogador cadastrado deve aparecer lá também
+5. Use o botão 🔄 no topo do app pra puxar as atualizações mais recentes
+   feitas por outra pessoa
+
+
+PASSO 6 — Atualizar o APK
+-----------------------------
+Como o app agora vive num endereço novo (o link da Vercel, não mais o do
+GitHub Pages), você precisa gerar o APK de novo apontando pra esse link:
+1. Acesse https://www.pwabuilder.com
+2. Cole o link novo: https://baba-tbt.vercel.app
+3. Repita o mesmo processo de "Package for stores" > Android > Generate Package
+4. Instale esse novo APK no celular (pode desinstalar o antigo antes)
+
+
+RESUMO DO QUE MUDOU
+----------------------
+- Antes: dados salvos só no celular de cada pessoa (localStorage)
+- Agora: dados salvos num banco compartilhado (Upstash Redis), acessível de
+  qualquer aparelho que abrir o app
+- O GitHub continua guardando o código-fonte; quem hospeda e roda o site
+  agora é a Vercel
+- Toda vez que você (ou eu) atualizar o app, é só subir os arquivos novos
+  no GitHub — a Vercel republica sozinha
