@@ -1028,20 +1028,38 @@ async function removerGrupo3(idx){
   render();
 }
 
+// Regra por dia: quinta = 5 na linha + 1 goleiro; sábado = 6 na linha + 1 goleiro
+function jogadoresNaLinha(){ return state.session.diaPelada==='quinta' ? 5 : 6; }
+function tamanhoTime(){ return jogadoresNaLinha() + 1; }
+// Todos os presentes (check-in) que jogam no dia selecionado
+function presentesDoDia(){
+  const dia = state.session.diaPelada;
+  return state.session.checkins.map(c=>getPlayer(c.playerId)).filter(p=>p && jogaNoDia(p, dia));
+}
+// Com apenas 1 goleiro presente, ele não entra no sorteio
+function goleiroUnico(){
+  const gols = presentesDoDia().filter(p=>p.position==='GOL');
+  return gols.length===1 ? gols[0] : null;
+}
+function presentesNoSorteio(){
+  const gu = goleiroUnico();
+  return presentesDoDia().filter(p=>!gu || p.id!==gu.id);
+}
 function associadosPresentes(){
-  return state.session.checkins.map(c=>getPlayer(c.playerId)).filter(p=>p && !p.guest);
+  return presentesNoSorteio().filter(p=>!p.guest);
 }
 function convidadosPresentes(){
-  return state.session.checkins.map(c=>getPlayer(c.playerId)).filter(p=>p && p.guest);
+  return presentesNoSorteio().filter(p=>p.guest);
 }
-function regra6Garantida(n){ return associadosPresentes().length >= n*6; }
+function regra6Garantida(n){ return associadosPresentes().length >= n*tamanhoTime(); }
 function effectiveNumTeams(){ return sorteioNumTeams; }
 function computeTargets(n, count){
   if(n<=0) return [];
-  if(count >= n*6){
-    // garante 6 por time e distribui o excedente (7º, 8º jogador...) de forma equilibrada entre os times
-    const target = Array(n).fill(6);
-    let leftover = count - n*6;
+  const T = tamanhoTime();
+  if(count >= n*T){
+    // garante o tamanho cheio por time (linha + 1 goleiro) e distribui o excedente de forma equilibrada entre os times
+    const target = Array(n).fill(T);
+    let leftover = count - n*T;
     let i = 0;
     while(leftover>0){
       target[i % n]++;
@@ -1057,7 +1075,8 @@ function computeTargets(n, count){
 }
 
 function renderSorteio(){
-  const presentes = state.session.checkins.map(c=>getPlayer(c.playerId)).filter(Boolean);
+  const presentes = presentesNoSorteio();
+  const gUnico = goleiroUnico();
   const qtdAssociados = associadosPresentes().length;
   const qtdConvidados = convidadosPresentes().length;
   const n = effectiveNumTeams();
@@ -1067,10 +1086,16 @@ function renderSorteio(){
   html += `<div class="card">`;
   html += `<label class="lbl">Número de times</label>
     <div class="segrow">${[2,3,4].map(x=>`<div class="seg ${x===sorteioNumTeams?'on':''}" onclick="sorteioNumTeams=${x}; resetManual(); render();">${x} times</div>`).join('')}</div>`;
+  const diaNome = state.session.diaPelada==='quinta' ? 'Quinta' : 'Sábado';
+  const linhaN = jogadoresNaLinha();
+  html += `<div class="meta" style="margin-bottom:10px;">📅 <b>Baba de ${diaNome}:</b> ${linhaN} na linha + 1 goleiro (${tamanhoTime()} por time).</div>`;
+  if(gUnico){
+    html += `<div class="meta" style="margin-bottom:10px;">🧤 Só há 1 goleiro presente (<b>${escapeHtml(gUnico.name)}</b>): ele fica <b>fora do sorteio</b>. Com 2 ou mais goleiros, todos entram.</div>`;
+  }
   if(regraAtiva){
-    html += `<div class="meta" style="margin-bottom:10px;">🔒 <b>Regra dos 6 ativa:</b> com ${qtdAssociados} associados presentes, o sorteio tenta formar grupos de 6 por time dentro dos ${n} times escolhidos.</div>`;
+    html += `<div class="meta" style="margin-bottom:10px;">🔒 <b>Regra dos ${tamanhoTime()} ativa:</b> com ${qtdAssociados} associados no sorteio, ele tenta formar times de ${tamanhoTime()} dentro dos ${n} times escolhidos.</div>`;
   } else {
-    html += `<div class="meta" style="margin-bottom:10px;">Com 18 ou mais associados presentes, o sorteio passa a tentar formar grupos de 6 por time.</div>`;
+    html += `<div class="meta" style="margin-bottom:10px;">Com ${n*tamanhoTime()} ou mais associados no sorteio (${n} times), ele passa a tentar formar times de ${tamanhoTime()}.</div>`;
   }
   html += `<label class="lbl">Modo</label>
     <div class="segrow">
@@ -1149,7 +1174,7 @@ function setManualTeam(playerId, teamIdx){
   render();
 }
 async function confirmarSorteioManual(){
-  const presentes = state.session.checkins.map(c=>getPlayer(c.playerId)).filter(Boolean);
+  const presentes = presentesNoSorteio();
   const n = effectiveNumTeams();
   const teams = Array.from({length:n}, ()=>({players:[]}));
   let unassigned = 0;
