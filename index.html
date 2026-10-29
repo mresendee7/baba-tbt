@@ -681,7 +681,17 @@ function setNovaCobranca(v){
 let novoDiaQuinta = true;
 let novoDiaSabado = true;
 function toggleNewDia(dia){
-  if(dia==='quinta') novoDiaQuinta = !novoDiaQuinta; else novoDiaSabado = !novoDiaSabado;
+  if(novoDiaQuinta && novoDiaSabado){
+    // os dois marcados: tocar em um dia escolhe SÓ aquele dia
+    novoDiaQuinta = (dia==='quinta');
+    novoDiaSabado = (dia==='sabado');
+  } else if(dia==='quinta'){
+    if(novoDiaQuinta) return; // precisa ter ao menos um dia
+    novoDiaQuinta = true;
+  } else {
+    if(novoDiaSabado) return;
+    novoDiaSabado = true;
+  }
   document.getElementById('newDiaQuinta').classList.toggle('on', novoDiaQuinta);
   document.getElementById('newDiaSabado').classList.toggle('on', novoDiaSabado);
 }
@@ -830,6 +840,27 @@ async function editPlayer(id){
   p.guest = guest;
   p.diaQuinta = diaQ;
   p.diaSabado = diaS;
+  // Lançar mensalidades (do mês atual até dezembro) só nos meses que ainda não têm cobrança
+  if(!guest){
+    const mkAtual = monthKey();
+    const ano = mkAtual.split('-')[0];
+    const mesInicial = parseInt(mkAtual.split('-')[1]);
+    p.dues = p.dues || [];
+    const faltam = [];
+    for(let m=mesInicial; m<=12; m++){
+      const mk = ano+'-'+String(m).padStart(2,'0');
+      if(!p.dues.some(d=>d.month===mk)) faltam.push(mk);
+    }
+    if(faltam.length && confirm(`Lançar mensalidade para ${p.name}?\n\nSerão criadas ${faltam.length} cobrança(s) pendente(s), de ${labelForMonth(faltam[0])} até ${labelForMonth(faltam[faltam.length-1])}.\n\nOK = lançar, Cancelar = não lançar`)){
+      const ultima = p.dues.length ? p.dues[p.dues.length-1] : null;
+      const valueStr = prompt('Valor da mensalidade (R$):', ultima ? ultima.value : '30');
+      if(valueStr!==null){
+        const valor = parseFloat(valueStr) || 0;
+        const metodo = (prompt('Forma de pagamento (pix, dinheiro, cartão):', ultima ? ultima.method : 'pix') || 'pix').trim() || 'pix';
+        faltam.forEach(mk=>p.dues.push({id:uid(), month:mk, value:valor, method:metodo, status:'pendente'}));
+      }
+    }
+  }
   await savePlayers();
   render();
 }
